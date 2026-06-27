@@ -460,13 +460,13 @@ const COMPANIES = {
     scorecard: [
       {category:'Profitability', score:5, weight:20,
         rationale:"Gross margin expanded from 41.8% (FY21) to 47.9% (TTM); operating margin rose to 32.6%; ROIC of ~36-40% is among the highest of any large-cap company."},
-      {category:'Growth', score:4, weight:20,
+      {category:'Growth', score:4, weight:10,
         rationale:"Revenue growth re-accelerated to 12.8% YoY (TTM) after near-flat FY23-FY24; diluted EPS growth of 28.8% TTM (helped by buybacks); FCF growth is lumpy (-9% FY25, then +31% TTM)."},
-      {category:'Financial Health', score:4, weight:20,
+      {category:'Financial Health', score:4, weight:15,
         rationale:"Debt/Equity fell from 1.17 to 0.72 year-over-year; net debt/equity is just 0.15. Current ratio (1.07) and quick ratio (0.91) sit near/below 1.0, but that reflects Apple's supplier-financed working-capital model rather than distress, given $129B of TTM free cash flow."},
-      {category:'Cash Generation', score:5, weight:20,
+      {category:'Cash Generation', score:5, weight:25,
         rationale:"FCF margin of 24-29%; capex is light at roughly 3% of revenue; free cash flow consistently exceeds net income, a sign of high earnings quality."},
-      {category:'Valuation', score:2, weight:20,
+      {category:'Valuation', score:2, weight:30,
         rationale:"P/E of ~33x and EV/EBITDA of ~25x sit above Apple's own 5-year average and above peers like Microsoft (~21x P/E); a PEG of 2.6x suggests the growth rate doesn't fully justify the multiple. The base-case DCF below implies limited margin of safety at the current price."}
     ]
   },
@@ -486,11 +486,11 @@ const COMPANIES = {
     valuation: { pe:[59.32,119.77,51.29,48.51,38.30,29.98], forwardPE:19.70, peg:0.44, ps:[21.28,18.61,24.68,26.75,21.12,18.70], pb:[21.53,22.72,34.99,44.01,29.00,24.25], evEbitda:[50.23,86.80,43.17,41.50,33.85,28.40], fcfYield:2.51, dividendYield:0.51 },
     dcfDefaults: { fcf0:119076, g1:28, gt:3.5, wacc:10.5, shares:24460, netCash:68224 },
     scorecard: [
-      {category:'Profitability', score:5, weight:20, rationale:"TTM net margin of 62.97% and operating margin of 64.02% are exceptional for a hardware company; ROIC of 129.31% reflects extraordinary capital efficiency driven by data-center GPU pricing power."},
-      {category:'Growth', score:5, weight:20, rationale:"TTM revenue grew 70.68% YoY to $253.5B, following 65.47% growth in FY2026 and 114.20% in FY2025, powered by AI data-center demand; net income growth of 107.90% TTM outpaces even that torrid revenue growth."},
-      {category:'Financial Health', score:5, weight:20, rationale:"Balance sheet carries only $12.3B total debt against $80.6B cash & ST investments and $195.5B equity, a net cash position of $68.2B; current ratio of 3.44x and debt/equity of 0.06x leave essentially no leverage risk."},
+      {category:'Profitability', score:5, weight:15, rationale:"TTM net margin of 62.97% and operating margin of 64.02% are exceptional for a hardware company; ROIC of 129.31% reflects extraordinary capital efficiency driven by data-center GPU pricing power."},
+      {category:'Growth', score:5, weight:30, rationale:"TTM revenue grew 70.68% YoY to $253.5B, following 65.47% growth in FY2026 and 114.20% in FY2025, powered by AI data-center demand; net income growth of 107.90% TTM outpaces even that torrid revenue growth."},
+      {category:'Financial Health', score:5, weight:10, rationale:"Balance sheet carries only $12.3B total debt against $80.6B cash & ST investments and $195.5B equity, a net cash position of $68.2B; current ratio of 3.44x and debt/equity of 0.06x leave essentially no leverage risk."},
       {category:'Cash Generation', score:5, weight:20, rationale:"TTM free cash flow of $119.1B on a 46.97% FCF margin, with operating cash flow of $125.6B; capex of just $6.6B is easily covered, funding $45.3B of buybacks over the TTM period."},
-      {category:'Valuation', score:2, weight:20, rationale:"TTM P/E of 29.98x and EV/EBITDA of 28.40x are rich versus the market despite a low PEG of 0.44x; FCF yield of only 2.51% means the stock is pricing in years of continued hyper-growth, leaving little margin for disappointment."}
+      {category:'Valuation', score:2, weight:25, rationale:"TTM P/E of 29.98x and EV/EBITDA of 28.40x are rich versus the market despite a low PEG of 0.44x; FCF yield of only 2.51% means the stock is pricing in years of continued hyper-growth, leaving little margin for disappointment."}
     ]
   },
 
@@ -509,9 +509,9 @@ const COMPANIES = {
     dcfDefaults: { fcf0:72916, g1:13, gt:3.5, wacc:9, shares:7458, netCash:21307 },
     scorecard: [
       {category:'Profitability', score:5, weight:20, rationale:"TTM operating margin of 46.80% and net margin of 39.34% are best-in-class for a company of this scale; ROIC of 20.56% and ROE of 31.10% remain strong even as the equity base has nearly tripled since FY2021."},
-      {category:'Growth', score:4, weight:20, rationale:"TTM revenue grew 17.88% YoY to $318.3B, accelerating from FY2025's 14.93% as Azure and AI services scale; TTM net income growth of 29.58% shows continued operating leverage despite heavy AI infrastructure spend."},
-      {category:'Financial Health', score:5, weight:20, rationale:"Total debt of $57.0B against $78.3B of cash & ST investments and $414.4B of equity gives a net cash position of $21.3B and a debt/equity ratio of just 0.12x; current ratio of 1.28x is adequate given minimal working-capital risk."},
-      {category:'Cash Generation', score:3, weight:20, rationale:"TTM free cash flow of $72.9B is roughly flat YoY (+1.82%) as capex surged to $97.2B (up from $64.6B in FY2025) to fund AI data-center buildout, compressing FCF margin from 25.42% to 22.91% even as operating cash flow grew 30.17% to $170.1B."},
+      {category:'Growth', score:4, weight:15, rationale:"TTM revenue grew 17.88% YoY to $318.3B, accelerating from FY2025's 14.93% as Azure and AI services scale; TTM net income growth of 29.58% shows continued operating leverage despite heavy AI infrastructure spend."},
+      {category:'Financial Health', score:5, weight:15, rationale:"Total debt of $57.0B against $78.3B of cash & ST investments and $414.4B of equity gives a net cash position of $21.3B and a debt/equity ratio of just 0.12x; current ratio of 1.28x is adequate given minimal working-capital risk."},
+      {category:'Cash Generation', score:3, weight:30, rationale:"TTM free cash flow of $72.9B is roughly flat YoY (+1.82%) as capex surged to $97.2B (up from $64.6B in FY2025) to fund AI data-center buildout, compressing FCF margin from 25.42% to 22.91% even as operating cash flow grew 30.17% to $170.1B."},
       {category:'Valuation', score:3, weight:20, rationale:"TTM P/E of 21.01x and EV/EBITDA of 15.12x are reasonable versus Microsoft's own history (FY2025 P/E was 36.47x) after the stock's pullback toward its 52-week low; FCF yield of 2.66% and dividend yield of 0.98% offer modest income support while AI capex weighs on near-term cash conversion."}
     ]
   },
@@ -531,9 +531,9 @@ const COMPANIES = {
     dcfDefaults: { fcf0:64429, g1:14, gt:3, wacc:9, shares:12217, netCash:30964 },
     scorecard: [
       {category:'Profitability', score:5, weight:20, rationale:"TTM operating margin of 32.7% and net margin of 37.9% (boosted by one-time investment gains) reflect Search/Cloud operating leverage; EBITDA margin expanded from 31.2% (FY2022) to 38.2% (TTM) as Cloud turned solidly profitable."},
-      {category:'Growth', score:4, weight:20, rationale:"Revenue grew from $282.8B (FY2022) to $402.8B (FY2025), a 15.1% YoY acceleration in FY2025, with TTM revenue of $422.5B up 17.4% YoY, driven by Search, YouTube and Cloud."},
-      {category:'Financial Health', score:5, weight:20, rationale:"Current ratio of 1.92x and quick ratio of 1.71x (TTM) remain healthy; total debt of $95.9B is dwarfed by $478.7B of equity (D/E of 0.20x) and the balance sheet still carries $31.0B of net cash despite a ramp in debt issuance to fund capex."},
-      {category:'Cash Generation', score:4, weight:20, rationale:"Operating cash flow rose to $174.4B TTM, but capex surged to $109.9B (from $52.5B in FY2024) for AI/data-center buildout, compressing FCF margin from 20.8% (FY2024) to 15.3% (TTM)."},
+      {category:'Growth', score:4, weight:15, rationale:"Revenue grew from $282.8B (FY2022) to $402.8B (FY2025), a 15.1% YoY acceleration in FY2025, with TTM revenue of $422.5B up 17.4% YoY, driven by Search, YouTube and Cloud."},
+      {category:'Financial Health', score:5, weight:15, rationale:"Current ratio of 1.92x and quick ratio of 1.71x (TTM) remain healthy; total debt of $95.9B is dwarfed by $478.7B of equity (D/E of 0.20x) and the balance sheet still carries $31.0B of net cash despite a ramp in debt issuance to fund capex."},
+      {category:'Cash Generation', score:4, weight:30, rationale:"Operating cash flow rose to $174.4B TTM, but capex surged to $109.9B (from $52.5B in FY2024) for AI/data-center buildout, compressing FCF margin from 20.8% (FY2024) to 15.3% (TTM)."},
       {category:'Valuation', score:2, weight:20, rationale:"TTM P/E of 26.2x and EV/EBITDA of 25.2x are well above the FY2022 trough; PEG of 1.74 suggests the stock is pricing in continued strong growth, leaving less margin of safety after the run to a $4T+ market cap."}
     ]
   },
@@ -554,8 +554,8 @@ const COMPANIES = {
     scorecard: [
       {category:'Profitability', score:5, weight:20, rationale:"TTM operating margin of 41.2% and gross margin of 81.9% are exceptional for the sector; EBITDA margin of 50.9% (TTM) is up sharply from 32.3% in FY2022 after the 2022-2023 cost cuts took hold."},
       {category:'Growth', score:4, weight:20, rationale:"Revenue grew from $116.6B (FY2022) to $201.0B (FY2025), with TTM revenue of $215.0B up 26.2% YoY, the fastest growth among large-cap ad platforms, even as Reality Labs continues to lose money."},
-      {category:'Financial Health', score:4, weight:20, rationale:"Current ratio of 2.35x remains solid, but the balance sheet flipped from $28.8B net cash (FY2024) to a net debt position of -$5.6B (TTM) as debt rose to $86.8B (D/E of 0.36x) to fund AI infrastructure."},
-      {category:'Cash Generation', score:4, weight:20, rationale:"Operating cash flow of $124.0B TTM is strong, but capex more than doubled from $37.3B (FY2024) to $75.7B (TTM) for AI compute, dragging FCF margin down to 22.4% (TTM) from a 32.9% peak in FY2024."},
+      {category:'Financial Health', score:4, weight:15, rationale:"Current ratio of 2.35x remains solid, but the balance sheet flipped from $28.8B net cash (FY2024) to a net debt position of -$5.6B (TTM) as debt rose to $86.8B (D/E of 0.36x) to fund AI infrastructure."},
+      {category:'Cash Generation', score:4, weight:25, rationale:"Operating cash flow of $124.0B TTM is strong, but capex more than doubled from $37.3B (FY2024) to $75.7B (TTM) for AI compute, dragging FCF margin down to 22.4% (TTM) from a 32.9% peak in FY2024."},
       {category:'Valuation', score:3, weight:20, rationale:"TTM P/E of 19.75x and forward P/E of 16.54x are below Meta's own FY2025 multiple (28.1x) and below GOOGL's TTM P/E (26.2x), with a PEG of 0.79 suggesting growth is reasonably priced."}
     ]
   },
@@ -574,10 +574,10 @@ const COMPANIES = {
     valuation: { pe:[51.46,null,52.39,39.67,32.19,27.15], forwardPE:27.23, peg:1.27, ps:[3.61,1.67,2.74,3.64,3.45,3.34], pb:[12.27,5.89,7.81,8.13,6.03,5.52], evEbitda:[28.94,17.18,19.02,19.39,17.20,16.49], fcfYield:-0.10, dividendYield:0 },
     dcfDefaults: { fcf0:-2472, g1:15, gt:3, wacc:8.5, shares:10847, netCash:-66799 },
     scorecard: [
-      {category:'Profitability', score:4, weight:20, rationale:"TTM operating margin hit 11.5% and net margin 12.3%, up from 2.4%/-0.5% in FY2022, driven by AWS scale and advertising mix; EBITDA margin expanded to 20.98% TTM from 10.5% in FY2022."},
-      {category:'Growth', score:4, weight:20, rationale:"Revenue grew from $469.8B (FY2021) to $716.9B (FY2025), with TTM revenue accelerating to $742.8B (+14.2% YoY) as AWS re-accelerates and ad revenue scales."},
-      {category:'Financial Health', score:4, weight:20, rationale:"Net debt position is modest relative to scale: TTM net debt of $66.8B against $441.9B of equity (net debt/equity -0.15) and current ratio of 1.18x."},
-      {category:'Cash Generation', score:3, weight:20, rationale:"TTM operating cash flow of $148.5B is robust, but free cash flow turned negative (-$2.5B TTM) as capex surged to $151.0B for AI/data-center buildout, suppressing FCF margin to -0.33%."},
+      {category:'Profitability', score:4, weight:15, rationale:"TTM operating margin hit 11.5% and net margin 12.3%, up from 2.4%/-0.5% in FY2022, driven by AWS scale and advertising mix; EBITDA margin expanded to 20.98% TTM from 10.5% in FY2022."},
+      {category:'Growth', score:4, weight:25, rationale:"Revenue grew from $469.8B (FY2021) to $716.9B (FY2025), with TTM revenue accelerating to $742.8B (+14.2% YoY) as AWS re-accelerates and ad revenue scales."},
+      {category:'Financial Health', score:4, weight:15, rationale:"Net debt position is modest relative to scale: TTM net debt of $66.8B against $441.9B of equity (net debt/equity -0.15) and current ratio of 1.18x."},
+      {category:'Cash Generation', score:3, weight:25, rationale:"TTM operating cash flow of $148.5B is robust, but free cash flow turned negative (-$2.5B TTM) as capex surged to $151.0B for AI/data-center buildout, suppressing FCF margin to -0.33%."},
       {category:'Valuation', score:2, weight:20, rationale:"TTM P/E of 27.15x and EV/EBITDA of 16.49x sit above Amazon's historical retail-business multiples, and FCF yield is negative on a TTM basis; the valuation already assumes a sharp capex-driven FCF rebound over the next few years."}
     ]
   },
@@ -596,11 +596,11 @@ const COMPANIES = {
     valuation: { pe:[24.74,25.99,21.30,29.62,32.10,29.05], forwardPE:27.60, peg:2.18, ps:[0.59,0.50,0.51,0.85,0.94,0.93], pb:[4.18,4.42,4.32,9.42,8.71,8.46], evEbitda:[14.20,15.80,13.60,18.90,19.80,18.90], fcfYield:1.78, dividendYield:0.96 },
     dcfDefaults: { fcf0:17850, g1:7, gt:3, wacc:7.5, shares:2670, netCash:-32000 },
     scorecard: [
-      {category:'Profitability', score:4, weight:20, rationale:"TTM net margin of 3.30% and operating margin of 4.88% are modest in absolute terms but represent steady multi-year expansion from 2.39%/4.53% in FY2022, driven by advertising, membership and e-commerce mix shift."},
-      {category:'Growth', score:3, weight:20, rationale:"TTM revenue of $725.3B is up roughly 4.6% YoY, consistent with Walmart's steady mid-single-digit growth profile; TTM net income growth of ~8% modestly outpaces revenue growth."},
+      {category:'Profitability', score:4, weight:15, rationale:"TTM net margin of 3.30% and operating margin of 4.88% are modest in absolute terms but represent steady multi-year expansion from 2.39%/4.53% in FY2022, driven by advertising, membership and e-commerce mix shift."},
+      {category:'Growth', score:3, weight:15, rationale:"TTM revenue of $725.3B is up roughly 4.6% YoY, consistent with Walmart's steady mid-single-digit growth profile; TTM net income growth of ~8% modestly outpaces revenue growth."},
       {category:'Financial Health', score:3, weight:20, rationale:"Current ratio of 0.78x is below 1.0x (typical for grocery-heavy retailers with fast inventory turns), and the company carries a net debt position of roughly $32.0B against $102.6B of equity (D/E 0.42x)."},
-      {category:'Cash Generation', score:4, weight:20, rationale:"TTM operating cash flow of $44.2B funds $26.3B of capex and still leaves $17.9B of free cash flow, comfortably covering the $6.9B dividend with room for buybacks."},
-      {category:'Valuation', score:2, weight:20, rationale:"TTM P/E of 29.05x and EV/EBITDA of 18.90x are well above Walmart's own 5-year historical average (P/E was 21-26x in FY2022-2024), reflecting a substantial re-rating as investors pay up for steady low-margin growth; FCF yield of just 1.78% leaves little valuation cushion."}
+      {category:'Cash Generation', score:4, weight:25, rationale:"TTM operating cash flow of $44.2B funds $26.3B of capex and still leaves $17.9B of free cash flow, comfortably covering the $6.9B dividend with room for buybacks."},
+      {category:'Valuation', score:2, weight:25, rationale:"TTM P/E of 29.05x and EV/EBITDA of 18.90x are well above Walmart's own 5-year historical average (P/E was 21-26x in FY2022-2024), reflecting a substantial re-rating as investors pay up for steady low-margin growth; FCF yield of just 1.78% leaves little valuation cushion."}
     ]
   },
 
@@ -620,9 +620,9 @@ const COMPANIES = {
     scorecard: [
       {category:'Profitability', score:5, weight:20, rationale:"TTM operating margin of 34.99% and gross margin of 65.83% reflect Broadcom's mix of high-margin custom AI silicon and VMware software; net margin of 31.15% TTM has fully recovered from the 11.43% FY2024 trough caused by VMware acquisition costs."},
       {category:'Growth', score:5, weight:20, rationale:"TTM revenue of $75.5B is up roughly 31% YoY, accelerating from FY2025's 31.5% growth as AI networking/custom ASIC demand (Google, Meta) and VMware integration both contribute; this is among the fastest growth rates in large-cap semis."},
-      {category:'Financial Health', score:3, weight:20, rationale:"Total debt of $66.8B against $67.3B of equity (D/E ~0.99x) leaves a net debt position of $54.0B, a legacy of the ~$69B VMware acquisition; current ratio of 1.35x is adequate and improving as VMware cash flow integrates."},
+      {category:'Financial Health', score:3, weight:25, rationale:"Total debt of $66.8B against $67.3B of equity (D/E ~0.99x) leaves a net debt position of $54.0B, a legacy of the ~$69B VMware acquisition; current ratio of 1.35x is adequate and improving as VMware cash flow integrates."},
       {category:'Cash Generation', score:5, weight:20, rationale:"TTM free cash flow of $31.4B on a 41.61% FCF margin, with operating cash flow of $33.5B against minimal capex of $2.1B; this comfortably funds an $11.2B dividend and ongoing deleveraging."},
-      {category:'Valuation', score:2, weight:20, rationale:"TTM P/E of 37.60x and EV/EBITDA of 35.80x are near record highs for Broadcom, reflecting investor enthusiasm for its AI networking/ASIC exposure; PEG of 1.95 and FCF yield of just 1.78% suggest the AI growth narrative is already richly priced in."}
+      {category:'Valuation', score:2, weight:15, rationale:"TTM P/E of 37.60x and EV/EBITDA of 35.80x are near record highs for Broadcom, reflecting investor enthusiasm for its AI networking/ASIC exposure; PEG of 1.95 and FCF yield of just 1.78% suggest the AI growth narrative is already richly priced in."}
     ]
   },
 
@@ -640,11 +640,11 @@ const COMPANIES = {
     valuation: { pe:[42.30,82.10,158.30,98.50,121.20,99.30], forwardPE:38.50, peg:1.55, ps:[8.14,4.60,5.96,12.80,15.30,14.45], pb:[17.30,1.92,2.30,4.40,5.50,5.20], evEbitda:[31.50,38.90,46.20,49.80,46.50,41.20], fcfYield:0.78, dividendYield:0 },
     dcfDefaults: { fcf0:3350, g1:33, gt:4, wacc:10.5, shares:1640, netCash:3000 },
     scorecard: [
-      {category:'Profitability', score:3, weight:20, rationale:"TTM operating margin of 12.84% and net margin of 9.81% have recovered from FY2023's trough (1.77%/3.77%) post-Xilinx integration, but remain well below NVDA's 64% operating margin in the same AI accelerator category."},
-      {category:'Growth', score:4, weight:20, rationale:"TTM revenue of $36.2B is up roughly 22% YoY, building on FY2025's 29.8% growth as MI300/MI400 AI GPUs and EPYC server CPUs gain share; net income growth of ~35% TTM shows operating leverage returning."},
+      {category:'Profitability', score:3, weight:15, rationale:"TTM operating margin of 12.84% and net margin of 9.81% have recovered from FY2023's trough (1.77%/3.77%) post-Xilinx integration, but remain well below NVDA's 64% operating margin in the same AI accelerator category."},
+      {category:'Growth', score:4, weight:30, rationale:"TTM revenue of $36.2B is up roughly 22% YoY, building on FY2025's 29.8% growth as MI300/MI400 AI GPUs and EPYC server CPUs gain share; net income growth of ~35% TTM shows operating leverage returning."},
       {category:'Financial Health', score:5, weight:20, rationale:"Debt/equity of just 0.04x and a net cash position of roughly $3.0B reflect a very conservative balance sheet; current ratio of 2.98x is strong."},
       {category:'Cash Generation', score:3, weight:20, rationale:"TTM free cash flow of $3.35B on a 9.25% FCF margin is improving from the FY2023-2024 trough (~5%) but remains thin relative to AMD's $850B+ market cap, leaving little cushion if AI GPU share gains disappoint."},
-      {category:'Valuation', score:1, weight:20, rationale:"TTM P/E of 99.30x and EV/EBITDA of 41.20x price in years of flawless AI GPU share-gain execution against NVDA; FCF yield of just 0.78% offers essentially no valuation support if growth merely meets (rather than beats) expectations."}
+      {category:'Valuation', score:1, weight:25, rationale:"TTM P/E of 99.30x and EV/EBITDA of 41.20x price in years of flawless AI GPU share-gain execution against NVDA; FCF yield of just 0.78% offers essentially no valuation support if growth merely meets (rather than beats) expectations."}
     ]
   },
 
@@ -662,11 +662,11 @@ const COMPANIES = {
     valuation: { pe:[235.80,57.10,68.40,195.30,290.50,256.80], forwardPE:120.50, peg:4.85, ps:[24.10,8.78,10.60,14.80,14.40,14.18], pb:[43.10,16.00,16.40,19.00,18.10,17.40], evEbitda:[105.20,38.50,46.80,72.50,84.50,77.30], fcfYield:0.39, dividendYield:0 },
     dcfDefaults: { fcf0:2400, g1:18, gt:4, wacc:10, shares:3485, netCash:29700 },
     scorecard: [
-      {category:'Profitability', score:2, weight:20, rationale:"TTM net margin of 4.51% and operating margin of 6.31% have compressed sharply from FY2022's 15.41%/16.76% peak as price cuts and EV competition pressured automotive gross margin (down to 16.78% TTM from 25.60% in FY2022)."},
-      {category:'Growth', score:2, weight:20, rationale:"TTM revenue of $99.85B is roughly flat versus FY2025's $98.8B, a marked deceleration from the 50%+ growth rates of FY2021-2022, as vehicle delivery growth has stalled amid EV demand softness and competition."},
+      {category:'Profitability', score:2, weight:15, rationale:"TTM net margin of 4.51% and operating margin of 6.31% have compressed sharply from FY2022's 15.41%/16.76% peak as price cuts and EV competition pressured automotive gross margin (down to 16.78% TTM from 25.60% in FY2022)."},
+      {category:'Growth', score:2, weight:25, rationale:"TTM revenue of $99.85B is roughly flat versus FY2025's $98.8B, a marked deceleration from the 50%+ growth rates of FY2021-2022, as vehicle delivery growth has stalled amid EV demand softness and competition."},
       {category:'Financial Health', score:5, weight:20, rationale:"Debt/equity of just 0.06x and a net cash position of $29.7B give Tesla one of the strongest balance sheets in the auto sector; current ratio of 2.07x is comfortable."},
       {category:'Cash Generation', score:2, weight:20, rationale:"TTM free cash flow of just $2.4B on a 2.40% FCF margin reflects continued heavy capex ($9.8B TTM) for Energy storage and AI/robotics initiatives (Optimus, Dojo) that have yet to generate offsetting revenue."},
-      {category:'Valuation', score:1, weight:20, rationale:"TTM P/E of 256.80x and EV/EBITDA of 77.30x are extreme even by Tesla's own history, pricing in success in robotics/FSD/robotaxi well beyond the core auto business; FCF yield of 0.39% provides no valuation support from current cash generation alone."}
+      {category:'Valuation', score:1, weight:30, rationale:"TTM P/E of 256.80x and EV/EBITDA of 77.30x are extreme even by Tesla's own history, pricing in success in robotics/FSD/robotaxi well beyond the core auto business; FCF yield of 0.39% provides no valuation support from current cash generation alone."}
     ]
   },
 
@@ -706,10 +706,10 @@ const COMPANIES = {
     valuation: { pe:[12.60,7.40,null,272.30,32.50,17.95], forwardPE:13.20, peg:0.32, ps:[2.66,2.10,3.90,5.95,7.40,9.93], pb:[2.27,1.98,2.06,6.90,8.50,9.85], evEbitda:[8.90,6.40,28.30,18.20,17.50,18.10], fcfYield:1.56, dividendYield:0 },
     dcfDefaults: { fcf0:21000, g1:24, gt:4, wacc:10, shares:1148, netCash:2000 },
     scorecard: [
-      {category:'Profitability', score:5, weight:20, rationale:"TTM net margin of 40.10% and operating margin of 45.07% mark a dramatic recovery from FY2023's loss-making downturn (-30.50%/-32.31%), as the memory upcycle (driven by AI-related HBM/DRAM demand) lifted gross margin to 52.92% TTM from a negative figure in FY2023."},
-      {category:'Growth', score:5, weight:20, rationale:"TTM revenue of $90.3B is up roughly 142% versus FY2025's $37.4B, reflecting both unit growth and sharply higher DRAM/NAND pricing in the current upcycle; this follows a deep trough in FY2023 ($15.5B), illustrating memory's highly cyclical nature."},
-      {category:'Financial Health', score:4, weight:20, rationale:"Balance sheet swung from a small net debt position in FY2024 (-5505, i.e. net debt of $5.5B) to roughly $2.0B of net cash TTM as upcycle cash flow rebuilt the balance sheet; current ratio of 3.48x is strong."},
-      {category:'Cash Generation', score:5, weight:20, rationale:"TTM free cash flow of $21.0B on a 23.25% FCF margin is a sharp reversal from the FY2023 cash burn (-$3.3B), with operating cash flow of $38.9B funding aggressive capex ($17.9B) for capacity expansion."},
+      {category:'Profitability', score:5, weight:15, rationale:"TTM net margin of 40.10% and operating margin of 45.07% mark a dramatic recovery from FY2023's loss-making downturn (-30.50%/-32.31%), as the memory upcycle (driven by AI-related HBM/DRAM demand) lifted gross margin to 52.92% TTM from a negative figure in FY2023."},
+      {category:'Growth', score:5, weight:15, rationale:"TTM revenue of $90.3B is up roughly 142% versus FY2025's $37.4B, reflecting both unit growth and sharply higher DRAM/NAND pricing in the current upcycle; this follows a deep trough in FY2023 ($15.5B), illustrating memory's highly cyclical nature."},
+      {category:'Financial Health', score:4, weight:25, rationale:"Balance sheet swung from a small net debt position in FY2024 (-5505, i.e. net debt of $5.5B) to roughly $2.0B of net cash TTM as upcycle cash flow rebuilt the balance sheet; current ratio of 3.48x is strong."},
+      {category:'Cash Generation', score:5, weight:25, rationale:"TTM free cash flow of $21.0B on a 23.25% FCF margin is a sharp reversal from the FY2023 cash burn (-$3.3B), with operating cash flow of $38.9B funding aggressive capex ($17.9B) for capacity expansion."},
       {category:'Valuation', score:3, weight:20, rationale:"TTM P/E of 17.95x and PEG of 0.32x look inexpensive against the current upcycle earnings, but memory earnings are inherently cyclical and could mean-revert sharply if pricing softens; EV/EBITDA of 18.10x is a more cycle-resistant gauge and sits at a moderate level."}
     ]
   },
@@ -728,9 +728,9 @@ const COMPANIES = {
     valuation: { pe:[10.10,18.50,75.30,null,null,null], forwardPE:42.50, peg:null, ps:[2.50,3.10,3.30,2.85,3.20,3.27], pb:[1.92,1.45,1.30,1.40,1.55,1.45], evEbitda:[10.20,16.80,20.50,null,40.50,28.30], fcfYield:-1.02, dividendYield:0 },
     dcfDefaults: { fcf0:-6700, g1:6, gt:3, wacc:9.5, shares:4420, netCash:-28400 },
     scorecard: [
-      {category:'Profitability', score:1, weight:20, rationale:"TTM operating margin of -15.81% and net margin of -9.20% remain deeply negative, though improved from FY2024's -21.91%/-35.32% trough; gross margin of 27.64% TTM is roughly half of FY2021's 55.45%, reflecting the cost of the foundry transition and underutilized fab capacity."},
-      {category:'Growth', score:2, weight:20, rationale:"TTM revenue of $53.76B is roughly flat to FY2021's $79.0B (down ~32% cumulatively) with no clear growth inflection yet visible; data-center and foundry revenue have not offset share losses in core CPU markets."},
-      {category:'Financial Health', score:2, weight:20, rationale:"Net debt position of roughly $28.4B against equity of $98.3B (D/E 0.54x) has built steadily since FY2021 as Intel funds its capital-intensive foundry buildout via debt and government/partner capital; current ratio of 1.14x is adequate but quick ratio of 0.72x shows thinner liquid coverage."},
+      {category:'Profitability', score:1, weight:15, rationale:"TTM operating margin of -15.81% and net margin of -9.20% remain deeply negative, though improved from FY2024's -21.91%/-35.32% trough; gross margin of 27.64% TTM is roughly half of FY2021's 55.45%, reflecting the cost of the foundry transition and underutilized fab capacity."},
+      {category:'Growth', score:2, weight:15, rationale:"TTM revenue of $53.76B is roughly flat to FY2021's $79.0B (down ~32% cumulatively) with no clear growth inflection yet visible; data-center and foundry revenue have not offset share losses in core CPU markets."},
+      {category:'Financial Health', score:2, weight:30, rationale:"Net debt position of roughly $28.4B against equity of $98.3B (D/E 0.54x) has built steadily since FY2021 as Intel funds its capital-intensive foundry buildout via debt and government/partner capital; current ratio of 1.14x is adequate but quick ratio of 0.72x shows thinner liquid coverage."},
       {category:'Cash Generation', score:1, weight:20, rationale:"TTM free cash flow remains negative at -$6.7B (FCF margin -12.46%), though improved from FY2024's -$14.4B, as heavy fab capex ($18.2B TTM) continues to outpace operating cash flow of $11.5B during the foundry ramp."},
       {category:'Valuation', score:2, weight:20, rationale:"With TTM earnings and FCF both negative, P/E and FCF yield are not meaningful; the market is valuing Intel on a turnaround/foundry-optionality basis (P/S of 3.27x) rather than current profitability, which carries elevated execution risk."}
     ]
@@ -750,11 +750,11 @@ const COMPANIES = {
     valuation: { pe:[15.20,16.80,16.40,18.60,21.50,17.30], forwardPE:16.10, peg:2.85, ps:[3.23,3.10,2.78,3.40,3.65,3.42], pb:[3.50,4.10,3.85,5.80,5.40,5.16], evEbitda:[9.80,10.50,9.20,12.40,12.80,11.60], fcfYield:3.01, dividendYield:2.42 },
     dcfDefaults: { fcf0:13850, g1:6, gt:3, wacc:8, shares:3990, netCash:-2100 },
     scorecard: [
-      {category:'Profitability', score:4, weight:20, rationale:"TTM operating margin of 26.01% and net margin of 20.49% are solid and improving from FY2024's dip (22.07%/19.19%) tied to the Splunk acquisition; gross margin of 63.95% reflects Cisco's growing software/subscription mix."},
-      {category:'Growth', score:2, weight:20, rationale:"TTM revenue of $60.75B is up modestly from FY2025's $56.65B, but growth has been choppy (FY2024 revenue actually declined from FY2023's $57.0B) as networking hardware demand normalized post-pandemic before Splunk and AI-networking demand reaccelerated growth."},
+      {category:'Profitability', score:4, weight:15, rationale:"TTM operating margin of 26.01% and net margin of 20.49% are solid and improving from FY2024's dip (22.07%/19.19%) tied to the Splunk acquisition; gross margin of 63.95% reflects Cisco's growing software/subscription mix."},
+      {category:'Growth', score:2, weight:15, rationale:"TTM revenue of $60.75B is up modestly from FY2025's $56.65B, but growth has been choppy (FY2024 revenue actually declined from FY2023's $57.0B) as networking hardware demand normalized post-pandemic before Splunk and AI-networking demand reaccelerated growth."},
       {category:'Financial Health', score:3, weight:20, rationale:"Debt/equity of 0.39x and a modest net debt position of roughly $2.1B (following debt raised for the ~$28B Splunk acquisition in FY2024) are manageable; current ratio of 1.19x is adequate."},
-      {category:'Cash Generation', score:4, weight:20, rationale:"TTM free cash flow of $13.85B on a 22.79% FCF margin comfortably covers the $6.4B dividend (2.42% yield) and $3.0B of buybacks, with minimal capex needs (~$950M) typical of Cisco's asset-light hardware/software model."},
-      {category:'Valuation', score:3, weight:20, rationale:"TTM P/E of 17.30x and EV/EBITDA of 11.60x are reasonable versus the broader tech sector and in line with Cisco's own historical range; a 2.42% dividend yield and 3.01% FCF yield offer a measure of valuation support, though PEG of 2.85x flags that growth remains modest relative to the multiple."}
+      {category:'Cash Generation', score:4, weight:25, rationale:"TTM free cash flow of $13.85B on a 22.79% FCF margin comfortably covers the $6.4B dividend (2.42% yield) and $3.0B of buybacks, with minimal capex needs (~$950M) typical of Cisco's asset-light hardware/software model."},
+      {category:'Valuation', score:3, weight:25, rationale:"TTM P/E of 17.30x and EV/EBITDA of 11.60x are reasonable versus the broader tech sector and in line with Cisco's own historical range; a 2.42% dividend yield and 3.01% FCF yield offer a measure of valuation support, though PEG of 2.85x flags that growth remains modest relative to the multiple."}
     ]
   },
 
@@ -774,9 +774,9 @@ const COMPANIES = {
     scorecard: [
       {category:'Profitability', score:4, weight:20, rationale:"TTM net margin of 2.96% and operating margin of 3.73% are thin in absolute terms but reflect Costco's deliberate low-markup model; the real profit engine is membership fee income, and margins have steadily expanded from 2.56%/3.44% in FY2021."},
       {category:'Growth', score:4, weight:20, rationale:"TTM revenue of $293.6B is up roughly 6.7% YoY, continuing a consistent mid-to-high single-digit growth streak (FY2021-FY2025 revenue grew from $195.9B to $275.0B) driven by steady comparable-sales growth and new club openings."},
-      {category:'Financial Health', score:4, weight:20, rationale:"Debt/equity improved to 0.24x (TTM) from 0.52x in FY2021, helped by a large FY2025 equity step-up; net cash position of roughly $5.5B and current ratio of 1.01x are typical for Costco's high-inventory-turn, low-receivables model."},
+      {category:'Financial Health', score:4, weight:15, rationale:"Debt/equity improved to 0.24x (TTM) from 0.52x in FY2021, helped by a large FY2025 equity step-up; net cash position of roughly $5.5B and current ratio of 1.01x are typical for Costco's high-inventory-turn, low-receivables model."},
       {category:'Cash Generation', score:4, weight:20, rationale:"TTM free cash flow of $7.45B on a 2.54% FCF margin funds the regular dividend (~$1.65B) with room for special dividends in strong years; operating cash flow of $12.5B comfortably covers capex of $5.05B for new warehouse openings."},
-      {category:'Valuation', score:1, weight:20, rationale:"TTM P/E of 48.95x and EV/EBITDA of 27.10x are near the high end of Costco's historical range, reflecting a persistent premium for membership-model stability and loyalty; PEG of 3.05x and FCF yield of just 1.75% suggest the stock is priced for perfection with little room for a growth slowdown."}
+      {category:'Valuation', score:1, weight:25, rationale:"TTM P/E of 48.95x and EV/EBITDA of 27.10x are near the high end of Costco's historical range, reflecting a persistent premium for membership-model stability and loyalty; PEG of 3.05x and FCF yield of just 1.75% suggest the stock is priced for perfection with little room for a growth slowdown."}
     ]
   }
 };
