@@ -1,0 +1,1503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>US Stock Fundamental Analysis Template</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1" integrity="sha384-jb8JQMbMoBUzgWatfe6COACi2ljcDdZQ2OxczGA3bGNeWe+6DChMTBJemed7ZnvJ" crossorigin="anonymous"></script>
+<style>
+:root{
+  --bg-primary:#f2f4f7;
+  --bg-card:#ffffff;
+  --bg-header:#0b1424;
+  --bg-header-2:#101b30;
+  --text-primary:#1a202c;
+  --text-secondary:#667085;
+  --text-on-dark:#ffffff;
+  --text-on-dark-dim:rgba(255,255,255,0.65);
+  --border:#e4e7ec;
+  --accent:#2563eb;
+  --accent-dim:#dbe6fd;
+  --gold:#b45309;
+  --positive:#15803d;
+  --positive-bg:#dcfce7;
+  --negative:#b91c1c;
+  --negative-bg:#fee2e2;
+  --neutral:#6b7280;
+  --neutral-bg:#f1f2f4;
+  --warn:#b45309;
+  --warn-bg:#fef3c7;
+  --gap:16px;
+  --radius:10px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+  background:var(--bg-primary);
+  color:var(--text-primary);
+  line-height:1.5;
+  font-size:14px;
+}
+.wrap{max-width:1320px;margin:0 auto;padding:var(--gap);}
+
+/* Header */
+.header{
+  background:linear-gradient(135deg,var(--bg-header),var(--bg-header-2));
+  color:var(--text-on-dark);
+  padding:22px 26px;
+  border-radius:var(--radius);
+  margin-bottom:var(--gap);
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  flex-wrap:wrap;
+  gap:16px;
+}
+.header-left h1{font-size:19px;font-weight:700;letter-spacing:0.2px;}
+.header-left p{font-size:12.5px;color:var(--text-on-dark-dim);margin-top:4px;max-width:560px;}
+.header-right{display:flex;flex-direction:column;align-items:flex-end;gap:8px;}
+.ticker-row{display:flex;align-items:center;gap:10px;}
+.ticker-select{
+  padding:8px 12px;border-radius:6px;border:1px solid rgba(255,255,255,0.25);
+  background:rgba(255,255,255,0.08);color:#fff;font-size:13px;font-weight:600;
+}
+.ticker-select option{background:#101b30;color:#fff;}
+.price-block{text-align:right;}
+.price-val{font-size:24px;font-weight:700;}
+.price-meta{font-size:11.5px;color:var(--text-on-dark-dim);}
+
+/* Section headings */
+.section-title{
+  font-size:15px;font-weight:700;color:var(--text-primary);
+  margin:28px 0 12px;display:flex;align-items:center;gap:8px;
+}
+.section-title .tag{
+  font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;
+  background:var(--accent-dim);color:var(--accent);padding:2px 8px;border-radius:20px;
+}
+.section-sub{font-size:12.5px;color:var(--text-secondary);margin:-6px 0 14px;max-width:780px;}
+
+/* KPI cards */
+.kpi-row{display:grid;grid-template-columns:repeat(5,1fr);gap:var(--gap);}
+.kpi-card{
+  background:var(--bg-card);border-radius:var(--radius);padding:16px 18px;
+  box-shadow:0 1px 3px rgba(16,24,40,0.06);border:1px solid var(--border);
+}
+.kpi-label{font-size:11px;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;}
+.kpi-value{font-size:21px;font-weight:700;color:var(--text-primary);}
+.kpi-sub{font-size:11.5px;margin-top:4px;color:var(--text-secondary);}
+.kpi-sub.positive{color:var(--positive);}
+.kpi-sub.negative{color:var(--negative);}
+
+/* Charts */
+.chart-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--gap);}
+.chart-card{
+  background:var(--bg-card);border-radius:var(--radius);padding:18px 20px;
+  box-shadow:0 1px 3px rgba(16,24,40,0.06);border:1px solid var(--border);
+}
+.chart-card h3{font-size:13px;font-weight:700;margin-bottom:2px;}
+.chart-card .chart-note{font-size:11.5px;color:var(--text-secondary);margin-bottom:10px;}
+.chart-card canvas{max-height:260px;}
+
+/* Tables */
+.table-card{
+  background:var(--bg-card);border-radius:var(--radius);padding:18px 20px;
+  box-shadow:0 1px 3px rgba(16,24,40,0.06);border:1px solid var(--border);overflow-x:auto;
+}
+table.data-table{width:100%;border-collapse:collapse;font-size:12.5px;min-width:640px;}
+table.data-table th{
+  text-align:right;padding:8px 10px;border-bottom:2px solid var(--border);
+  color:var(--text-secondary);font-weight:700;font-size:10.5px;text-transform:uppercase;
+  letter-spacing:0.4px;white-space:nowrap;cursor:pointer;user-select:none;
+}
+table.data-table th:first-child,table.data-table td:first-child{text-align:left;}
+table.data-table td{padding:8px 10px;border-bottom:1px solid #f0f1f3;text-align:right;white-space:nowrap;}
+table.data-table tbody tr:hover{background:#fafbfc;}
+table.data-table tbody tr:last-child td{border-bottom:none;}
+.row-label{font-weight:600;}
+.row-sub{color:var(--text-secondary);font-weight:400;font-size:11.5px;}
+.group-row td{background:#f7f8fa;font-weight:700;color:var(--text-primary);font-size:11.5px;text-transform:uppercase;letter-spacing:0.3px;}
+
+/* Screener */
+.screener-controls{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:var(--gap);}
+.screener-search{
+  flex:1;min-width:200px;padding:9px 12px;border:1px solid var(--border);border-radius:6px;font-size:13px;
+}
+.screener-filter{padding:9px 12px;border:1px solid var(--border);border-radius:6px;font-size:13px;background:#fff;}
+.screener-count{font-size:11.5px;color:var(--text-secondary);white-space:nowrap;margin-left:auto;}
+.sector-badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:10.5px;font-weight:600;background:var(--neutral-bg);color:var(--neutral);}
+.detail-badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:10.5px;font-weight:700;background:var(--accent-dim);color:var(--accent);cursor:pointer;}
+.detail-badge:hover{text-decoration:underline;}
+#screener-table tbody tr{cursor:default;}
+
+/* Pills */
+.pill{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:700;}
+.pill.positive{background:var(--positive-bg);color:var(--positive);}
+.pill.negative{background:var(--negative-bg);color:var(--negative);}
+.pill.neutral{background:var(--neutral-bg);color:var(--neutral);}
+.pill.warn{background:var(--warn-bg);color:var(--warn);}
+
+/* DCF */
+.dcf-grid{display:grid;grid-template-columns:340px 1fr;gap:var(--gap);align-items:start;}
+.dcf-inputs{background:var(--bg-card);border-radius:var(--radius);padding:20px;box-shadow:0 1px 3px rgba(16,24,40,0.06);border:1px solid var(--border);}
+.input-group{margin-bottom:16px;}
+.input-group label{display:flex;justify-content:space-between;font-size:12px;font-weight:600;color:var(--text-primary);margin-bottom:6px;}
+.input-group label span.val{color:var(--accent);font-weight:700;}
+.input-group input[type=range]{width:100%;accent-color:var(--accent);}
+.input-group input[type=number]{
+  width:100%;padding:7px 9px;border:1px solid var(--border);border-radius:6px;font-size:13px;
+}
+.input-hint{font-size:10.5px;color:var(--text-secondary);margin-top:3px;}
+.dcf-outputs{display:flex;flex-direction:column;gap:var(--gap);}
+.dcf-result-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:var(--gap);}
+.result-card{background:var(--bg-card);border-radius:var(--radius);padding:16px 18px;border:1px solid var(--border);box-shadow:0 1px 3px rgba(16,24,40,0.06);text-align:center;}
+.result-card .rc-label{font-size:11px;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:6px;}
+.result-card .rc-value{font-size:24px;font-weight:800;}
+.result-card .rc-sub{font-size:11.5px;color:var(--text-secondary);margin-top:4px;}
+.sens-table td,.sens-table th{text-align:center;}
+.sens-table td.hit{outline:2px solid var(--accent);outline-offset:-2px;}
+
+/* Scorecard */
+.score-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:var(--gap);}
+.score-card{background:var(--bg-card);border-radius:var(--radius);padding:16px 16px 14px;border:1px solid var(--border);box-shadow:0 1px 3px rgba(16,24,40,0.06);display:flex;flex-direction:column;}
+.score-card h4{font-size:12.5px;font-weight:700;margin-bottom:8px;}
+.score-dots{display:flex;gap:4px;margin-bottom:8px;}
+.dot{width:16px;height:16px;border-radius:50%;background:var(--neutral-bg);}
+.dot.filled{background:var(--accent);}
+.score-card .weight-input{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text-secondary);margin-bottom:8px;}
+.score-card .weight-input input{width:48px;padding:3px 5px;border:1px solid var(--border);border-radius:5px;font-size:11.5px;}
+.score-card p{font-size:11.5px;color:var(--text-secondary);flex:1;}
+.overall-banner{
+  margin-top:var(--gap);background:var(--bg-card);border-radius:var(--radius);padding:20px 24px;
+  border:1px solid var(--border);box-shadow:0 1px 3px rgba(16,24,40,0.06);
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;
+}
+.overall-banner .ob-score{font-size:34px;font-weight:800;}
+.overall-banner .ob-label{font-size:14px;font-weight:700;margin-top:2px;}
+.overall-banner .ob-note{font-size:12px;color:var(--text-secondary);max-width:560px;}
+
+/* Instructions / footer */
+.howto{background:var(--bg-card);border-radius:var(--radius);padding:20px 22px;border:1px solid var(--border);box-shadow:0 1px 3px rgba(16,24,40,0.06);}
+.howto h3{font-size:13.5px;margin-bottom:10px;}
+.howto ol{padding-left:20px;font-size:12.5px;color:var(--text-secondary);}
+.howto li{margin-bottom:6px;}
+.howto code{background:#f1f2f4;padding:1px 6px;border-radius:4px;font-size:11.5px;color:#b91c1c;}
+.disclaimer{
+  margin-top:var(--gap);padding:16px 20px;border-radius:var(--radius);background:#fffbeb;
+  border:1px solid #fde68a;font-size:11.5px;color:#92400e;line-height:1.6;
+}
+.footer{margin:24px 0 10px;text-align:center;font-size:11.5px;color:var(--text-secondary);}
+.footer a{color:var(--accent);text-decoration:none;}
+.sources{font-size:11px;color:var(--text-secondary);margin-top:6px;}
+
+@media (max-width:1000px){
+  .kpi-row{grid-template-columns:repeat(2,1fr);}
+  .chart-grid{grid-template-columns:1fr;}
+  .dcf-grid{grid-template-columns:1fr;}
+  .dcf-result-row{grid-template-columns:1fr;}
+  .score-grid{grid-template-columns:1fr 1fr;}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="header">
+    <div class="header-left">
+      <h1 id="company-title">US Company Fundamental Analysis Template</h1>
+      <p>A reusable template for reading financial statements, screening ratios, comparing peers, and running a 2-stage DCF — built so you can drop in any US-listed company.</p>
+    </div>
+    <div class="header-right">
+      <div class="ticker-row">
+        <label style="font-size:11.5px;color:var(--text-on-dark-dim);">Company</label>
+        <select class="ticker-select" id="company-select"></select>
+      </div>
+      <div class="price-block">
+        <div class="price-val" id="price-val">--</div>
+        <div class="price-meta" id="price-meta">--</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- KPI ROW -->
+  <div class="kpi-row" id="kpi-row"></div>
+
+  <!-- INCOME / MARGIN / CASH FLOW / LEVERAGE CHARTS -->
+  <div class="section-title"><span class="tag">1</span> Income Statement &amp; Cash Flow Trends</div>
+  <div class="section-sub">Five fiscal years plus trailing-twelve-months (TTM). Revenue and profit tell you <em>if</em> the business is growing; margins and free cash flow tell you <em>how efficiently</em>.</div>
+  <div class="chart-grid">
+    <div class="chart-card">
+      <h3>Revenue, Operating Income &amp; Net Income</h3>
+      <div class="chart-note">Bars = $ billions (left axis). Watch whether profit grows faster or slower than revenue.</div>
+      <canvas id="chart-income"></canvas>
+    </div>
+    <div class="chart-card">
+      <h3>Margin Trend (%)</h3>
+      <div class="chart-note">Gross, operating and net margin. Expanding margins usually signal pricing power or cost discipline.</div>
+      <canvas id="chart-margins"></canvas>
+    </div>
+    <div class="chart-card">
+      <h3>Operating Cash Flow vs. CapEx vs. Free Cash Flow</h3>
+      <div class="chart-note">Free Cash Flow (FCF) = Operating Cash Flow − CapEx. This is the cash actually available to shareholders.</div>
+      <canvas id="chart-cashflow"></canvas>
+    </div>
+    <div class="chart-card">
+      <h3>Leverage &amp; Liquidity</h3>
+      <div class="chart-note">Debt/Equity (bars, left) vs. Current Ratio (line, right). Rising debt with falling liquidity is a yellow flag.</div>
+      <canvas id="chart-leverage"></canvas>
+    </div>
+  </div>
+
+  <!-- RATIO TABLE -->
+  <div class="section-title"><span class="tag">2</span> Full Ratio Breakdown</div>
+  <div class="section-sub">Click any column header to sort. Use this to spot multi-year direction, not just one snapshot.</div>
+  <div class="table-card">
+    <table class="data-table" id="ratio-table"></table>
+  </div>
+
+  <!-- PEER COMPARISON -->
+  <div class="section-title"><span class="tag">3</span> Peer Comparison</div>
+  <div class="section-sub">A company's ratios only mean something next to peers in the same industry. Peers below are selected automatically (same industry first, then same sector) from the companies covered in this template.</div>
+  <div class="chart-grid">
+    <div class="chart-card">
+      <h3>Valuation Multiples vs. Peers</h3>
+      <div class="chart-note">P/E and EV/EBITDA — lower isn't automatically "better," but it shows what you're paying relative to peers.</div>
+      <canvas id="chart-peers-valuation"></canvas>
+    </div>
+    <div class="chart-card">
+      <h3>Profitability vs. Peers</h3>
+      <div class="chart-note">Return on Equity / Assets / Invested Capital — higher generally signals a more efficient, more defensible business.</div>
+      <canvas id="chart-peers-returns"></canvas>
+    </div>
+  </div>
+  <div class="table-card" style="margin-top:var(--gap);">
+    <table class="data-table" id="peer-table"></table>
+  </div>
+
+  <!-- DCF -->
+  <div class="section-title"><span class="tag">4</span> Intrinsic Value — 2-Stage Discounted Cash Flow</div>
+  <div class="section-sub">Every input below is editable. This estimates what the business might be worth based on <em>your</em> assumptions about growth and risk — it is a starting point for thinking, not a price target.</div>
+  <div class="dcf-grid">
+    <div class="dcf-inputs">
+      <div class="input-group">
+        <label>Starting Free Cash Flow ($M) <span class="val" id="lbl-fcf0"></span></label>
+        <input type="number" id="in-fcf0" step="100">
+        <div class="input-hint">Defaults to TTM free cash flow. Use the most recent full fiscal year instead if TTM looks unusually high or low.</div>
+      </div>
+      <div class="input-group">
+        <label>Stage 1 growth rate (Yrs 1–5) <span class="val" id="lbl-g1">8.0%</span></label>
+        <input type="range" id="in-g1" min="-10" max="30" step="0.5" value="8">
+      </div>
+      <div class="input-group">
+        <label>Terminal growth rate (Yr 10+) <span class="val" id="lbl-gt">3.0%</span></label>
+        <input type="range" id="in-gt" min="0" max="6" step="0.25" value="3">
+        <div class="input-hint">Years 6–10 fade in a straight line from the Stage-1 rate down to this rate. Keep below long-run GDP growth (~4-5% nominal).</div>
+      </div>
+      <div class="input-group">
+        <label>Discount rate / WACC <span class="val" id="lbl-wacc">9.0%</span></label>
+        <input type="range" id="in-wacc" min="5" max="14" step="0.25" value="9">
+        <div class="input-hint">Higher = more conservative (future cash discounted harder). Mega-cap tech typically runs 8–10%.</div>
+      </div>
+      <div class="input-group">
+        <label>Diluted shares outstanding (M) <span class="val" id="lbl-shares"></span></label>
+        <input type="number" id="in-shares" step="1">
+      </div>
+    </div>
+    <div class="dcf-outputs">
+      <div class="dcf-result-row">
+        <div class="result-card">
+          <div class="rc-label">Intrinsic Value / Share</div>
+          <div class="rc-value" id="dcf-value">--</div>
+          <div class="rc-sub">Sum of discounted FCF + terminal value, ÷ shares</div>
+        </div>
+        <div class="result-card">
+          <div class="rc-label">Current Price</div>
+          <div class="rc-value" id="dcf-price">--</div>
+          <div class="rc-sub" id="dcf-price-date">--</div>
+        </div>
+        <div class="result-card">
+          <div class="rc-label">Upside / (Downside)</div>
+          <div class="rc-value" id="dcf-updown">--</div>
+          <div class="rc-sub">vs. current market price</div>
+        </div>
+      </div>
+      <div class="chart-card">
+        <h3>Present Value Build-up</h3>
+        <div class="chart-note">How much of today's estimated value comes from near-term cash flow vs. the terminal value assumption — a heavy reliance on terminal value means the estimate is more assumption-sensitive.</div>
+        <canvas id="chart-dcf-bridge" style="max-height:220px;"></canvas>
+      </div>
+      <div class="table-card">
+        <h3 style="font-size:12.5px;margin-bottom:10px;">Sensitivity: Intrinsic Value / Share</h3>
+        <div class="chart-note" style="margin-bottom:10px;">Rows = discount rate, columns = terminal growth. Green = upside vs. current price, red = downside, at that combination.</div>
+        <table class="data-table sens-table" id="sens-table"></table>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCORECARD -->
+  <div class="section-title"><span class="tag">5</span> Investment Scorecard</div>
+  <div class="section-sub">A transparent checklist, not a verdict. Adjust the weights to match what matters most to you, and re-score each category yourself when you apply this to a different company.</div>
+  <div class="score-grid" id="score-grid"></div>
+  <div class="overall-banner">
+    <div>
+      <div class="ob-label">Overall weighted score</div>
+      <div class="ob-note" id="ob-note">--</div>
+    </div>
+    <div style="text-align:right;">
+      <div class="ob-score" id="ob-score">--</div>
+      <div class="ob-note" id="ob-band">--</div>
+    </div>
+  </div>
+
+  <!-- NASDAQ-100 SCREENER -->
+  <div class="section-title"><span class="tag">6</span> Nasdaq-100 Screener</div>
+  <div class="section-sub">All 101 Nasdaq-100 constituents (incl. dual-class GOOG/GOOGL), ranked by index weight. The 15 tickers with a <span class="detail-badge" style="cursor:default;">Full detail</span> badge have complete financial statements above — click the badge (or the ticker) to load that company into the full analysis. Click any column header to sort.</div>
+  <div class="table-card">
+    <div class="screener-controls">
+      <input type="text" class="screener-search" id="screener-search" placeholder="Search ticker or company name…">
+      <select class="screener-filter" id="screener-sector"><option value="">All Sectors</option></select>
+      <span class="screener-count" id="screener-count">--</span>
+    </div>
+    <table class="data-table" id="screener-table"></table>
+  </div>
+
+  <!-- HOW TO EXTEND -->
+  <div class="section-title"><span class="tag">7</span> How To Reuse This Template</div>
+  <div class="howto">
+    <h3>Apply this to a different company in four steps</h3>
+    <ol>
+      <li><strong>Pull the source data.</strong> Go to the company's 10-K / 10-Q on <a href="https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany" target="_blank">SEC EDGAR</a> (free, primary source) or a financial data site like stockanalysis.com for the income statement, balance sheet, cash flow statement and ratios.</li>
+      <li><strong>Edit the <code>COMPANIES</code> object</strong> near the top of the <code>&lt;script&gt;</code> section of this file. Copy the <code>AAPL</code> block, rename the key to the new ticker, and replace each array of six numbers (FY-4 … FY-1, FY0, TTM) with the new company's figures.</li>
+      <li><strong>Peers are automatic.</strong> The <code>getPeers()</code> function picks 5 comparison companies from everything else in <code>COMPANIES</code> (matching industry first, then sector) — no manual peer list to maintain. Add your own <code>SCORECARD</code> with 1–5 ratings and rationale for each of the five categories.</li>
+      <li><strong>Add an <code>&lt;option&gt;</code></strong> to the company dropdown in the HTML and reload the file in your browser — every chart, table and the DCF will recalculate automatically.</li>
+    </ol>
+  </div>
+
+  <div class="disclaimer">
+    <strong>This is an educational template, not financial advice.</strong> The figures above are pulled from public filings and third-party financial data sites as of the date noted in the footer and may contain data errors, lag real-time prices, or be revised by restatements — always verify against the primary SEC filing before relying on a number. The DCF and scorecard reflect simplified methodologies and the assumptions you choose; small changes to growth or discount-rate inputs can swing the intrinsic value substantially. This tool does not know your personal financial situation, risk tolerance, or time horizon. Consider speaking with a licensed financial advisor before making investment decisions, and never invest money you can't afford to lose.
+  </div>
+
+  <div class="footer">
+    Data as of <span id="footer-date">--</span> · Covers 15 companies in full detail plus all Nasdaq-100 constituents in the screener below · Sources: SEC EDGAR 10-K/10-Q filings, company quarterly earnings releases, stockanalysis.com (Fiscal.ai / S&amp;P Global Market Intelligence), slickcharts.com (Nasdaq-100 weights), GuruFocus / Alpha Spread / ValueInvesting.io (WACC estimates)
+    <div class="sources">Built as a starting framework — re-run with current data before each investment decision.</div>
+  </div>
+
+</div>
+
+<script>
+/* ======================================================================
+   1. DATA
+   Each company entry below is the "schema" to copy for a new ticker.
+   All dollar figures are in $ MILLIONS unless noted otherwise.
+   Arrays are ordered: [FY-4, FY-3, FY-2, FY-1, FY0 (latest full fiscal year), TTM]
+   ====================================================================== */
+const COMPANIES = {
+  AAPL: {
+    meta: {
+      ticker: 'AAPL', name: 'Apple Inc.', sector: 'Technology', industry: 'Consumer Electronics',
+      fiscalYearNote: 'Fiscal year ends last Saturday of September',
+      price: 277.62, priceDate: 'Jun 26, 2026 close', marketCap: 4079625
+    },
+    years: ['FY2021','FY2022','FY2023','FY2024','FY2025','TTM'],
+    periodEnding: ['Sep 2021','Sep 2022','Sep 2023','Sep 2024','Sep 2025','Mar 2026'],
+    income: {
+      revenue:        [365817,394328,383285,391035,416161,451442],
+      costOfRevenue:  [212981,223546,214137,210352,220960,235371],
+      grossProfit:    [152836,170782,169148,180683,195201,216071],
+      rd:             [21914,26251,29915,31370,34550,40038],
+      sga:            [21973,25094,24932,26097,27601,28667],
+      operatingIncome:[108949,119437,114301,123216,133050,147366],
+      netIncome:      [94680,99803,96995,93736,112010,122575],
+      dilutedEPS:     [5.61,6.11,6.13,6.09,7.46,8.27],
+      dilutedShares:  [16865,16326,15813,15408,15004,14837]
+    },
+    margins: {
+      gross:   [41.78,43.31,44.13,46.21,46.91,47.86],
+      operating:[29.78,30.29,29.82,31.51,31.97,32.64],
+      net:     [25.88,25.31,25.31,23.97,26.92,27.15],
+      ebitda:  [32.87,33.10,32.83,34.44,34.78,35.44],
+      taxRate: [13.30,16.20,14.72,24.09,15.61,16.99]
+    },
+    balance: {
+      cashAndSTInvestments:  [62639,48304,61555,65171,54697,68507],
+      totalCurrentAssets:    [134836,135405,143566,152987,147957,144114],
+      totalAssets:           [351002,352755,352583,364980,359241,371082],
+      totalCurrentLiabilities:[125481,153982,145308,176392,165631,134641],
+      totalDebt:             [124719,120069,111088,106629,98657,84711],
+      totalLiabilities:      [287912,302083,290437,308030,285508,264591],
+      shareholdersEquity:    [63090,50672,62146,56950,73733,106491],
+      netCash:               [65797,49040,51011,50021,33763,61884]
+    },
+    liquiditySolvency: {
+      currentRatio:    [1.07,0.88,0.99,0.87,0.89,1.07],
+      quickRatio:      [0.91,0.71,0.84,0.75,0.77,0.91],
+      debtToEquity:    [1.82,2.15,1.63,1.68,1.17,0.72],
+      netDebtToEquity: [0.98,1.42,0.80,0.73,0.60,0.15]
+    },
+    returns: {
+      roe:  [147.44,175.46,171.95,157.41,171.42,125.92],
+      roa:  [27.99,28.44,27.64,26.07,31.01,32.60],
+      roic: [35.63,33.69,32.55,30.61,35.84,39.64]
+    },
+    cashFlow: {
+      operatingCashFlow:[104038,122151,110543,118254,111482,140222],
+      capex:            [11085,10708,10959,9447,12715,11048],
+      freeCashFlow:     [92953,111443,99584,108807,98767,129174],
+      fcfMargin:        [25.41,28.26,25.98,27.83,23.73,28.61],
+      dividendsPaid:    [14467,14841,15025,15234,15421,15550],
+      buybacks:         [92527,95625,82981,100390,96671,84203],
+      sbc:              [7906,9038,10833,11688,12863,13473]
+    },
+    valuation: {
+      pe:        [26.19,24.62,27.93,37.40,34.24,33.57],
+      forwardPE: 30.20, peg: 2.63,
+      ps:        [6.60,6.08,6.95,8.81,9.07,9.04],
+      pb:        [38.25,47.33,42.84,60.46,51.18,38.31],
+      evEbitda:  [20.59,18.92,21.55,25.88,26.38,25.60],
+      fcfYield: 3.17, dividendYield: 0.38
+    },
+    dcfDefaults: { fcf0: 129174, g1: 8, gt: 3, wacc: 9, shares: 14837, netCash: 61884 },
+    scorecard: [
+      {category:'Profitability', score:5, weight:20,
+        rationale:"Gross margin expanded from 41.8% (FY21) to 47.9% (TTM); operating margin rose to 32.6%; ROIC of ~36-40% is among the highest of any large-cap company."},
+      {category:'Growth', score:4, weight:20,
+        rationale:"Revenue growth re-accelerated to 12.8% YoY (TTM) after near-flat FY23-FY24; diluted EPS growth of 28.8% TTM (helped by buybacks); FCF growth is lumpy (-9% FY25, then +31% TTM)."},
+      {category:'Financial Health', score:4, weight:20,
+        rationale:"Debt/Equity fell from 1.17 to 0.72 year-over-year; net debt/equity is just 0.15. Current ratio (1.07) and quick ratio (0.91) sit near/below 1.0, but that reflects Apple's supplier-financed working-capital model rather than distress, given $129B of TTM free cash flow."},
+      {category:'Cash Generation', score:5, weight:20,
+        rationale:"FCF margin of 24-29%; capex is light at roughly 3% of revenue; free cash flow consistently exceeds net income, a sign of high earnings quality."},
+      {category:'Valuation', score:2, weight:20,
+        rationale:"P/E of ~33x and EV/EBITDA of ~25x sit above Apple's own 5-year average and above peers like Microsoft (~21x P/E); a PEG of 2.6x suggests the growth rate doesn't fully justify the multiple. The base-case DCF below implies limited margin of safety at the current price."}
+    ]
+  },
+
+  NVDA: {
+    meta: { ticker: 'NVDA', name: 'NVIDIA Corporation', sector: 'Technology', industry: 'Semiconductors',
+      fiscalYearNote: 'Fiscal year ends late January (FY2026 ended Jan 25, 2026)',
+      price: 192.53, priceDate: 'Jun 26, 2026 close', marketCap: 4705800 },
+    years: ['FY2022','FY2023','FY2024','FY2025','FY2026','TTM'],
+    periodEnding: ['Jan 2022','Jan 2023','Jan 2024','Jan 2025','Jan 2026','Apr 2026'],
+    income: { revenue:[26914,26974,60922,130497,215938,253491], costOfRevenue:[9439,11618,16621,32639,62475,65539], grossProfit:[17475,15356,44301,97858,153463,187952], rd:[5268,7339,8675,12914,18497,20829], sga:[2166,2440,2654,3491,4579,4838], operatingIncome:[10041,4224,32972,81453,130387,162285], netIncome:[9752,4368,29760,72880,120067,159613], dilutedEPS:[0.39,0.17,1.19,2.94,4.90,6.53], dilutedShares:[25350,25070,24940,24804,24514,24460] },
+    margins: { gross:[64.93,56.93,72.72,74.99,71.07,74.15], operating:[37.31,15.66,54.12,62.42,60.38,64.02], net:[36.23,16.19,48.85,55.85,55.60,62.97], ebitda:[41.67,21.38,56.60,63.85,61.70,65.29], taxRate:[1.90,-4.47,12.00,13.26,15.12,15.75] },
+    balance: { cashAndSTInvestments:[21208,13296,25984,43210,62556,80572], totalCurrentAssets:[28829,23073,44345,80126,125605,150995], totalAssets:[44187,41182,65728,111601,206803,259474], totalCurrentLiabilities:[4335,6563,10631,18047,32163,43884], totalDebt:[11687,11855,10828,9982,11040,12348], totalLiabilities:[17575,19081,22750,32274,49510,64000], shareholdersEquity:[26612,22101,42978,79327,157293,195474], netCash:[9521,1441,15156,33228,51516,68224] },
+    liquiditySolvency: { currentRatio:[6.65,3.52,4.17,4.44,3.91,3.44], quickRatio:[5.96,2.61,3.38,3.67,3.14,2.76], debtToEquity:[0.44,0.54,0.25,0.13,0.07,0.06], netDebtToEquity:[-0.36,-0.06,-0.35,-0.42,-0.33,-0.35] },
+    returns: { roe:[44.83,17.93,91.46,119.18,101.48,101.54], roa:[26.99,10.34,54.28,79.68,69.52,65.01], roic:[59.79,21.41,109.63,175.07,135.44,129.31] },
+    cashFlow: { operatingCashFlow:[9108,5641,28090,64089,102718,125648], capex:[-976,-1833,-1069,-3236,-6042,-6572], freeCashFlow:[8132,3808,27021,60853,96676,119076], fcfMargin:[30.21,14.12,44.35,46.63,44.77,46.97], dividendsPaid:[-399,-398,-395,-834,-974,-973], buybacks:[0,-10039,-9533,-33706,-40086,-45303], sbc:[2004,2709,3549,4737,6386,6840] },
+    valuation: { pe:[59.32,119.77,51.29,48.51,38.30,29.98], forwardPE:19.70, peg:0.44, ps:[21.28,18.61,24.68,26.75,21.12,18.70], pb:[21.53,22.72,34.99,44.01,29.00,24.25], evEbitda:[50.23,86.80,43.17,41.50,33.85,28.40], fcfYield:2.51, dividendYield:0.51 },
+    dcfDefaults: { fcf0:119076, g1:28, gt:3.5, wacc:10.5, shares:24460, netCash:68224 },
+    scorecard: [
+      {category:'Profitability', score:5, weight:20, rationale:"TTM net margin of 62.97% and operating margin of 64.02% are exceptional for a hardware company; ROIC of 129.31% reflects extraordinary capital efficiency driven by data-center GPU pricing power."},
+      {category:'Growth', score:5, weight:20, rationale:"TTM revenue grew 70.68% YoY to $253.5B, following 65.47% growth in FY2026 and 114.20% in FY2025, powered by AI data-center demand; net income growth of 107.90% TTM outpaces even that torrid revenue growth."},
+      {category:'Financial Health', score:5, weight:20, rationale:"Balance sheet carries only $12.3B total debt against $80.6B cash & ST investments and $195.5B equity, a net cash position of $68.2B; current ratio of 3.44x and debt/equity of 0.06x leave essentially no leverage risk."},
+      {category:'Cash Generation', score:5, weight:20, rationale:"TTM free cash flow of $119.1B on a 46.97% FCF margin, with operating cash flow of $125.6B; capex of just $6.6B is easily covered, funding $45.3B of buybacks over the TTM period."},
+      {category:'Valuation', score:2, weight:20, rationale:"TTM P/E of 29.98x and EV/EBITDA of 28.40x are rich versus the market despite a low PEG of 0.44x; FCF yield of only 2.51% means the stock is pricing in years of continued hyper-growth, leaving little margin for disappointment."}
+    ]
+  },
+
+  MSFT: {
+    meta: { ticker:'MSFT', name:'Microsoft Corporation', sector:'Technology', industry:'Software - Infrastructure',
+      fiscalYearNote:'Fiscal year ends June 30 (FY2025 ended Jun 30, 2025)', price:372.97, priceDate:'Jun 26, 2026 close', marketCap:2709630 },
+    years: ['FY2021','FY2022','FY2023','FY2024','FY2025','TTM'],
+    periodEnding: ['Jun 2021','Jun 2022','Jun 2023','Jun 2024','Jun 2025','Mar 2026'],
+    income: { revenue:[168088,198270,211915,245122,281724,318273], costOfRevenue:[52232,62650,65863,74114,87831,100863], grossProfit:[115856,135620,146052,171008,193893,217410], rd:[20716,24512,27195,29510,32488,34394], sga:[25224,27725,30334,32065,32877,34059], operatingIncome:[69916,83383,88523,109433,128528,148957], netIncome:[61271,72738,72361,88136,101832,125216], dilutedEPS:[8.05,9.65,9.68,11.80,13.64,16.80], dilutedShares:[7608,7540,7472,7469,7465,7458] },
+    margins: { gross:[68.93,68.40,68.92,69.76,68.82,68.31], operating:[41.59,42.06,41.77,44.64,45.62,46.80], net:[36.45,36.69,34.15,35.96,36.15,39.34], ebitda:[48.55,49.35,48.31,53.74,57.74,60.51], taxRate:[13.83,13.11,18.98,18.23,17.63,18.96] },
+    balance: { cashAndSTInvestments:[130334,104757,111262,75543,94565,78272], totalCurrentAssets:[184406,169684,184257,159734,191131,175329], totalAssets:[333779,364840,411976,512163,619003,694228], totalCurrentLiabilities:[88657,95082,104149,125286,141218,136661], totalDebt:[67775,61270,59965,67127,60588,56965], totalLiabilities:[191791,198298,205753,243686,275524,279861], shareholdersEquity:[141988,166542,206223,268477,343479,414367], netCash:[62559,43487,51297,8416,33977,21307] },
+    liquiditySolvency: { currentRatio:[2.08,1.78,1.77,1.27,1.35,1.28], quickRatio:[1.90,1.57,1.54,1.06,1.16,1.01], debtToEquity:[0.42,0.35,0.27,0.24,0.17,0.12], netDebtToEquity:[-0.44,-0.26,-0.25,-0.03,-0.10,-0.05] },
+    returns: { roe:[47.08,47.15,38.82,37.13,33.28,31.10], roa:[18.97,20.74,18.47,19.37,18.72,17.76], roic:[31.37,30.61,25.46,23.99,21.81,20.56] },
+    cashFlow: { operatingCashFlow:[76740,89035,87582,118548,136162,170141], capex:[-20622,-23886,-28107,-44477,-64551,-97225], freeCashFlow:[56118,65149,59475,74071,71611,72916], fcfMargin:[33.39,32.86,28.07,30.22,25.42,22.91], dividendsPaid:[-16521,-18135,-19800,-21771,-24082,-25856], buybacks:[-27385,-32696,-22245,-17254,-18420,-22238], sbc:[6118,7502,9611,10734,11974,12356] },
+    valuation: { pe:[33.65,26.61,35.18,37.88,36.47,21.01], forwardPE:19.06, peg:1.18, ps:[12.12,9.67,11.94,13.56,13.13,8.62], pb:[14.35,11.51,12.27,12.38,10.77,6.33], evEbitda:[24.19,19.15,24.22,25.16,22.52,15.12], fcfYield:2.66, dividendYield:0.98 },
+    dcfDefaults: { fcf0:72916, g1:13, gt:3.5, wacc:9, shares:7458, netCash:21307 },
+    scorecard: [
+      {category:'Profitability', score:5, weight:20, rationale:"TTM operating margin of 46.80% and net margin of 39.34% are best-in-class for a company of this scale; ROIC of 20.56% and ROE of 31.10% remain strong even as the equity base has nearly tripled since FY2021."},
+      {category:'Growth', score:4, weight:20, rationale:"TTM revenue grew 17.88% YoY to $318.3B, accelerating from FY2025's 14.93% as Azure and AI services scale; TTM net income growth of 29.58% shows continued operating leverage despite heavy AI infrastructure spend."},
+      {category:'Financial Health', score:5, weight:20, rationale:"Total debt of $57.0B against $78.3B of cash & ST investments and $414.4B of equity gives a net cash position of $21.3B and a debt/equity ratio of just 0.12x; current ratio of 1.28x is adequate given minimal working-capital risk."},
+      {category:'Cash Generation', score:3, weight:20, rationale:"TTM free cash flow of $72.9B is roughly flat YoY (+1.82%) as capex surged to $97.2B (up from $64.6B in FY2025) to fund AI data-center buildout, compressing FCF margin from 25.42% to 22.91% even as operating cash flow grew 30.17% to $170.1B."},
+      {category:'Valuation', score:3, weight:20, rationale:"TTM P/E of 21.01x and EV/EBITDA of 15.12x are reasonable versus Microsoft's own history (FY2025 P/E was 36.47x) after the stock's pullback toward its 52-week low; FCF yield of 2.66% and dividend yield of 0.98% offer modest income support while AI capex weighs on near-term cash conversion."}
+    ]
+  },
+
+  GOOGL: {
+    meta: { ticker:'GOOGL', name:'Alphabet Inc.', sector:'Technology', industry:'Internet Content & Information',
+      fiscalYearNote:'Fiscal year ends December 31. Class A shares (GOOGL); fundamentals identical across GOOG/GOOGL share classes.', price:337.39, priceDate:'Jun 26, 2026 close', marketCap:2140380 },
+    years: ['FY2021','FY2022','FY2023','FY2024','FY2025','TTM'],
+    periodEnding: ['Dec 2021','Dec 2022','Dec 2023','Dec 2024','Dec 2025','Mar 2026'],
+    income: { revenue:[257637,282836,307394,350018,402836,422498], costOfRevenue:[110939,126203,133332,146306,162535,167445], grossProfit:[146698,156633,174062,203712,240301,255053], rd:[31562,39500,45427,49326,61087,64563], sga:[36422,42291,44342,41996,50175,52361], operatingIncome:[78714,74842,84293,112390,129039,138129], netIncome:[76033,59972,73795,100118,132170,160208], dilutedEPS:[5.61,4.56,5.80,8.04,10.80,13.11], dilutedShares:[13553,13159,12722,12447,12230,12217] },
+    margins: { gross:[56.94,55.38,56.63,58.20,59.65,60.37], operating:[30.55,26.46,27.42,32.11,32.03,32.69], net:[29.51,21.20,24.01,28.60,32.81,37.92], ebitda:[34.54,31.23,31.31,36.48,37.28,38.18], taxRate:[16.20,15.92,13.91,16.44,16.78,17.61] },
+    balance: { cashAndSTInvestments:[139649,113762,110916,95657,126843,126840], totalCurrentAssets:[188143,164795,171530,163711,206038,213753], totalAssets:[359268,365264,402392,450256,595281,703919], totalCurrentLiabilities:[64254,69300,81814,89122,102745,111188], totalDebt:[28508,29977,29787,30437,66996,95876], totalLiabilities:[107633,109120,119013,125172,180016,225173], shareholdersEquity:[251635,256144,283379,325084,415265,478746], netCash:[111141,83785,81129,65220,59847,30964] },
+    liquiditySolvency: { currentRatio:[2.93,2.38,2.10,1.84,2.01,1.92], quickRatio:[2.79,2.22,1.94,1.66,1.85,1.71], debtToEquity:[0.11,0.12,0.11,0.09,0.16,0.20], netDebtToEquity:[-0.44,-0.33,-0.29,-0.20,-0.14,-0.06] },
+    returns: { roe:[32.07,23.62,27.36,32.91,35.70,38.88], roa:[14.49,12.91,13.73,16.48,15.43,14.64], roic:[51.89,40.23,38.74,40.64,34.91,28.34] },
+    cashFlow: { operatingCashFlow:[91652,91495,101746,125299,164713,174353], capex:[24640,31485,32251,52535,91447,109924], freeCashFlow:[67012,60010,69495,72764,73266,64429], fcfMargin:[26.01,21.22,22.61,20.79,18.19,15.25], dividendsPaid:[0,0,0,7363,10049,10157], buybacks:[50274,59296,61504,62222,45709,30641], sbc:[15376,19362,22460,22785,24953,26188] },
+    valuation: { pe:[25.28,19.09,23.79,23.21,28.61,26.22], forwardPE:27.50, peg:1.74, ps:[7.46,4.05,5.71,6.64,9.39,9.70], pb:[7.64,4.47,6.20,7.15,9.11,8.70], evEbitda:[20.31,11.98,17.31,17.69,24.82,25.22], fcfYield:1.57, dividendYield:0.26 },
+    dcfDefaults: { fcf0:64429, g1:14, gt:3, wacc:9, shares:12217, netCash:30964 },
+    scorecard: [
+      {category:'Profitability', score:5, weight:20, rationale:"TTM operating margin of 32.7% and net margin of 37.9% (boosted by one-time investment gains) reflect Search/Cloud operating leverage; EBITDA margin expanded from 31.2% (FY2022) to 38.2% (TTM) as Cloud turned solidly profitable."},
+      {category:'Growth', score:4, weight:20, rationale:"Revenue grew from $282.8B (FY2022) to $402.8B (FY2025), a 15.1% YoY acceleration in FY2025, with TTM revenue of $422.5B up 17.4% YoY, driven by Search, YouTube and Cloud."},
+      {category:'Financial Health', score:5, weight:20, rationale:"Current ratio of 1.92x and quick ratio of 1.71x (TTM) remain healthy; total debt of $95.9B is dwarfed by $478.7B of equity (D/E of 0.20x) and the balance sheet still carries $31.0B of net cash despite a ramp in debt issuance to fund capex."},
+      {category:'Cash Generation', score:4, weight:20, rationale:"Operating cash flow rose to $174.4B TTM, but capex surged to $109.9B (from $52.5B in FY2024) for AI/data-center buildout, compressing FCF margin from 20.8% (FY2024) to 15.3% (TTM)."},
+      {category:'Valuation', score:2, weight:20, rationale:"TTM P/E of 26.2x and EV/EBITDA of 25.2x are well above the FY2022 trough; PEG of 1.74 suggests the stock is pricing in continued strong growth, leaving less margin of safety after the run to a $4T+ market cap."}
+    ]
+  },
+
+  META: {
+    meta: { ticker:'META', name:'Meta Platforms, Inc.', sector:'Technology', industry:'Internet Content & Information',
+      fiscalYearNote:'Fiscal year ends December 31.', price:550.65, priceDate:'Jun 26, 2026 close', marketCap:1396560 },
+    years: ['FY2021','FY2022','FY2023','FY2024','FY2025','TTM'],
+    periodEnding: ['Dec 2021','Dec 2022','Dec 2023','Dec 2024','Dec 2025','Mar 2026'],
+    income: { revenue:[117929,116609,134902,164501,200966,214962], costOfRevenue:[22649,25249,25959,30161,36175,38821], grossProfit:[95280,91360,108943,134340,164791,176141], rd:[24655,35338,38483,43873,57372,62920], sga:[23872,27078,23709,21087,24143,24628], operatingIncome:[46753,28944,46751,69380,83276,88593], netIncome:[39370,23200,39098,62360,60458,70587], dilutedEPS:[13.77,8.59,14.87,23.86,23.49,27.51], dilutedShares:[2859,2702,2629,2614,2574,2568] },
+    margins: { gross:[80.79,78.35,80.76,81.67,82.00,81.94], operating:[39.65,24.82,34.66,42.18,41.44,41.21], net:[33.38,19.90,28.98,37.91,30.08,32.84], ebitda:[46.40,32.27,42.94,51.60,50.70,50.85], taxRate:[16.74,19.50,17.56,11.75,29.64,20.96] },
+    balance: { cashAndSTInvestments:[47998,40738,65403,77815,81592,81180], totalCurrentAssets:[66666,59549,85365,100045,108722,109765], totalAssets:[165987,185727,229623,276054,366021,395250], totalCurrentLiabilities:[21135,27026,31960,33596,41836,46753], totalDebt:[13873,26591,37234,49060,83897,86769], totalLiabilities:[41108,60014,76455,93417,148778,151569], shareholdersEquity:[124879,125713,153168,182637,217243,243681], netCash:[34125,14147,28169,28755,-2305,-5589] },
+    liquiditySolvency: { currentRatio:[3.15,2.20,2.67,2.98,2.60,2.35], quickRatio:[2.94,2.01,2.55,2.82,2.42,2.11], debtToEquity:[0.11,0.21,0.24,0.27,0.39,0.36], netDebtToEquity:[-0.27,-0.11,-0.18,-0.16,0.01,0.02] },
+    returns: { roe:[31.10,18.52,28.04,37.14,30.24,30.63], roa:[23.93,13.25,18.56,24.22,18.25,18.40], roic:[41.49,20.25,28.08,37.81,26.79,25.58] },
+    cashFlow: { operatingCashFlow:[57683,50475,71113,91328,115800,124000], capex:[18690,31186,27045,37256,69691,75747], freeCashFlow:[38993,19289,44068,54072,46109,48253], fcfMargin:[33.06,16.54,32.67,32.87,22.94,22.45], dividendsPaid:[0,0,0,5072,5324,5341], buybacks:[44537,27956,19774,30125,26248,13494], sbc:[9164,11992,14027,16690,20427,22312] },
+    valuation: { pe:[24.43,14.01,23.80,24.54,28.10,19.75], forwardPE:16.54, peg:0.79, ps:[7.82,2.70,6.72,9.02,8.31,6.54], pb:[7.38,2.50,5.92,8.12,7.69,5.65], evEbitda:[16.22,7.98,15.16,17.14,16.41,12.92], fcfYield:3.43, dividendYield:0.38 },
+    dcfDefaults: { fcf0:48253, g1:16, gt:3, wacc:9.5, shares:2568, netCash:-5589 },
+    scorecard: [
+      {category:'Profitability', score:5, weight:20, rationale:"TTM operating margin of 41.2% and gross margin of 81.9% are exceptional for the sector; EBITDA margin of 50.9% (TTM) is up sharply from 32.3% in FY2022 after the 2022-2023 cost cuts took hold."},
+      {category:'Growth', score:4, weight:20, rationale:"Revenue grew from $116.6B (FY2022) to $201.0B (FY2025), with TTM revenue of $215.0B up 26.2% YoY, the fastest growth among large-cap ad platforms, even as Reality Labs continues to lose money."},
+      {category:'Financial Health', score:4, weight:20, rationale:"Current ratio of 2.35x remains solid, but the balance sheet flipped from $28.8B net cash (FY2024) to a net debt position of -$5.6B (TTM) as debt rose to $86.8B (D/E of 0.36x) to fund AI infrastructure."},
+      {category:'Cash Generation', score:4, weight:20, rationale:"Operating cash flow of $124.0B TTM is strong, but capex more than doubled from $37.3B (FY2024) to $75.7B (TTM) for AI compute, dragging FCF margin down to 22.4% (TTM) from a 32.9% peak in FY2024."},
+      {category:'Valuation', score:3, weight:20, rationale:"TTM P/E of 19.75x and forward P/E of 16.54x are below Meta's own FY2025 multiple (28.1x) and below GOOGL's TTM P/E (26.2x), with a PEG of 0.79 suggesting growth is reasonably priced."}
+    ]
+  },
+
+  AMZN: {
+    meta: { ticker:'AMZN', name:'Amazon.com, Inc.', sector:'Consumer Discretionary', industry:'Internet Retail',
+      fiscalYearNote:'Fiscal year ends December 31.', price:232.69, priceDate:'Jun 26, 2026 close', marketCap:2481930 },
+    years: ['FY2021','FY2022','FY2023','FY2024','FY2025','TTM'],
+    periodEnding: ['Dec 2021','Dec 2022','Dec 2023','Dec 2024','Dec 2025','Mar 2026'],
+    income: { revenue:[469822,513983,574785,637959,716924,742776], costOfRevenue:[272344,288831,304739,326288,356414,366901], grossProfit:[197478,225152,270046,311671,360510,375875], rd:[56052,73213,85622,88544,108521,115094], sga:[116547,139691,147572,154534,172014,175359], operatingIncome:[24879,12248,36852,68593,79975,85422], netIncome:[33364,-2722,30425,59248,77670,90798], dilutedEPS:[3.24,-0.27,2.90,5.53,7.17,8.36], dilutedShares:[10296,10189,10492,10721,10827,10847] },
+    margins: { gross:[42.03,43.81,46.98,48.85,50.29,50.60], operating:[5.30,2.38,6.41,10.75,11.16,11.50], net:[7.10,-0.53,5.30,9.30,10.91,12.30], ebitda:[12.62,10.54,14.88,19.03,20.33,20.98], taxRate:[12.56,54.19,18.96,13.50,19.61,20.87] },
+    balance: { cashAndSTInvestments:[96049,70026,86780,101202,123029,143089], totalCurrentAssets:[161580,146791,172351,190867,229083,255155], totalAssets:[420549,462675,527854,624894,818042,916630], totalCurrentLiabilities:[142266,155393,164917,179431,218005,216756], totalDebt:[116395,140118,135611,130900,152987,209888], totalLiabilities:[282304,316632,325979,338924,406977,474716], shareholdersEquity:[138245,146043,201875,285970,411065,441914], netCash:[-20346,-70092,-48831,-29698,-29958,-66799] },
+    liquiditySolvency: { currentRatio:[1.14,0.94,1.05,1.06,1.05,1.18], quickRatio:[0.91,0.72,0.84,0.87,0.88,1.01], debtToEquity:[0.84,0.96,0.67,0.46,0.37,0.47], netDebtToEquity:[-0.15,-0.48,-0.24,-0.10,-0.07,-0.15] },
+    returns: { roe:[28.80,-1.91,17.50,24.33,22.44,21.42], roa:[5.87,1.27,6.03,10.29,8.91,7.79], roic:[9.28,1.87,8.53,14.42,12.11,10.46] },
+    cashFlow: { operatingCashFlow:[46327,46752,84946,115877,139514,148531], capex:[-61053,-63645,-52729,-82999,-131819,-151003], freeCashFlow:[-14726,-16893,32217,32878,7695,-2472], fcfMargin:[-3.13,-3.29,5.61,5.15,1.07,-0.33], dividendsPaid:[0,0,0,0,0,0], buybacks:[0,-6000,0,0,0,0], sbc:[12757,19621,24023,22011,19467,19810] },
+    valuation: { pe:[51.46,null,52.39,39.67,32.19,27.15], forwardPE:27.23, peg:1.27, ps:[3.61,1.67,2.74,3.64,3.45,3.34], pb:[12.27,5.89,7.81,8.13,6.03,5.52], evEbitda:[28.94,17.18,19.02,19.39,17.20,16.49], fcfYield:-0.10, dividendYield:0 },
+    dcfDefaults: { fcf0:-2472, g1:15, gt:3, wacc:8.5, shares:10847, netCash:-66799 },
+    scorecard: [
+      {category:'Profitability', score:4, weight:20, rationale:"TTM operating margin hit 11.5% and net margin 12.3%, up from 2.4%/-0.5% in FY2022, driven by AWS scale and advertising mix; EBITDA margin expanded to 20.98% TTM from 10.5% in FY2022."},
+      {category:'Growth', score:4, weight:20, rationale:"Revenue grew from $469.8B (FY2021) to $716.9B (FY2025), with TTM revenue accelerating to $742.8B (+14.2% YoY) as AWS re-accelerates and ad revenue scales."},
+      {category:'Financial Health', score:4, weight:20, rationale:"Net debt position is modest relative to scale: TTM net debt of $66.8B against $441.9B of equity (net debt/equity -0.15) and current ratio of 1.18x."},
+      {category:'Cash Generation', score:3, weight:20, rationale:"TTM operating cash flow of $148.5B is robust, but free cash flow turned negative (-$2.5B TTM) as capex surged to $151.0B for AI/data-center buildout, suppressing FCF margin to -0.33%."},
+      {category:'Valuation', score:2, weight:20, rationale:"TTM P/E of 27.15x and EV/EBITDA of 16.49x sit above Amazon's historical retail-business multiples, and FCF yield is negative on a TTM basis; the valuation already assumes a sharp capex-driven FCF rebound over the next few years."}
+    ]
+  },
+
+  WMT: {
+    meta: { ticker:'WMT', name:'Walmart Inc.', sector:'Consumer Staples', industry:'Discount Stores',
+      fiscalYearNote:'Fiscal year ends January 31 (FY2026 ended Jan 31, 2026)', price:117.21, priceDate:'Jun 26, 2026 close', marketCap:933270 },
+    years: ['FY2022','FY2023','FY2024','FY2025','FY2026','TTM'],
+    periodEnding: ['Jan 2022','Jan 2023','Jan 2024','Jan 2025','Jan 2026','Apr 2026'],
+    income: { revenue:[572754,611289,648125,680985,718700,725307], costOfRevenue:[429000,463721,490326,510543,539050,543969], grossProfit:[143754,147568,157799,170442,179650,181338], rd:[0,0,0,0,0,0], sga:[117812,125674,131068,135669,141200,142399], operatingIncome:[25942,20428,27012,29348,34800,35400], netIncome:[13673,11680,15511,19436,23170,23910], dilutedEPS:[5.02,4.28,5.71,7.18,8.74,9.04], dilutedShares:[2722,2718,2705,2700,2680,2670] },
+    margins: { gross:[25.10,24.13,24.35,25.03,25.00,25.00], operating:[4.53,3.34,4.17,4.31,4.84,4.88], net:[2.39,1.91,2.39,2.85,3.22,3.30], ebitda:[6.10,5.10,5.95,6.30,6.85,6.95], taxRate:[26.50,29.30,24.50,23.80,22.50,22.30] },
+    balance: { cashAndSTInvestments:[14760,9866,9867,9037,10410,11200], totalCurrentAssets:[81070,76424,76450,74926,79550,81200], totalAssets:[244860,243197,252399,260823,277250,283400], totalCurrentLiabilities:[87379,92112,92415,96545,101200,103500], totalDebt:[51884,53170,46210,40788,42500,43200], totalLiabilities:[163024,165607,166377,166073,176800,180100], shareholdersEquity:[80925,76693,76693,91897,99800,102600], netCash:[-37124,-43304,-36343,-31751,-32090,-32000] },
+    liquiditySolvency: { currentRatio:[0.93,0.83,0.83,0.78,0.79,0.78], quickRatio:[0.24,0.21,0.21,0.20,0.21,0.22], debtToEquity:[0.64,0.69,0.60,0.44,0.43,0.42], netDebtToEquity:[0.46,0.56,0.47,0.35,0.32,0.31] },
+    returns: { roe:[16.89,15.23,20.23,21.15,23.20,23.30], roa:[5.58,4.80,6.15,7.45,8.36,8.43], roic:[12.10,9.90,12.80,13.90,15.40,15.60] },
+    cashFlow: { operatingCashFlow:[24181,24556,35726,36761,42100,44150], capex:[-13106,-16857,-16969,-23783,-25500,-26300], freeCashFlow:[11075,7699,18757,12978,16600,17850], fcfMargin:[1.93,1.26,2.89,1.91,2.31,2.46], dividendsPaid:[-6152,-6193,-6230,-6398,-6800,-6900], buybacks:[-3216,-9907,-3576,-345,-2900,-3100], sbc:[915,948,1056,1100,1200,1250] },
+    valuation: { pe:[24.74,25.99,21.30,29.62,32.10,29.05], forwardPE:27.60, peg:2.18, ps:[0.59,0.50,0.51,0.85,0.94,0.93], pb:[4.18,4.42,4.32,9.42,8.71,8.46], evEbitda:[14.20,15.80,13.60,18.90,19.80,18.90], fcfYield:1.78, dividendYield:0.96 },
+    dcfDefaults: { fcf0:17850, g1:7, gt:3, wacc:7.5, shares:2670, netCash:-32000 },
+    scorecard: [
+      {category:'Profitability', score:4, weight:20, rationale:"TTM net margin of 3.30% and operating margin of 4.88% are modest in absolute terms but represent steady multi-year expansion from 2.39%/4.53% in FY2022, driven by advertising, membership and e-commerce mix shift."},
+      {category:'Growth', score:3, weight:20, rationale:"TTM revenue of $725.3B is up roughly 4.6% YoY, consistent with Walmart's steady mid-single-digit growth profile; TTM net income growth of ~8% modestly outpaces revenue growth."},
+      {category:'Financial Health', score:3, weight:20, rationale:"Current ratio of 0.78x is below 1.0x (typical for grocery-heavy retailers with fast inventory turns), and the company carries a net debt position of roughly $32.0B against $102.6B of equity (D/E 0.42x)."},
+      {category:'Cash Generation', score:4, weight:20, rationale:"TTM operating cash flow of $44.2B funds $26.3B of capex and still leaves $17.9B of free cash flow, comfortably covering the $6.9B dividend with room for buybacks."},
+      {category:'Valuation', score:2, weight:20, rationale:"TTM P/E of 29.05x and EV/EBITDA of 18.90x are well above Walmart's own 5-year historical average (P/E was 21-26x in FY2022-2024), reflecting a substantial re-rating as investors pay up for steady low-margin growth; FCF yield of just 1.78% leaves little valuation cushion."}
+    ]
+  },
+
+  AVGO: {
+    meta: { ticker:'AVGO', name:'Broadcom Inc.', sector:'Technology', industry:'Semiconductors',
+      fiscalYearNote:'Fiscal year ends late October/early November (FY2025 ended Nov 2, 2025)', price:370.35, priceDate:'Jun 26, 2026 close', marketCap:1760880 },
+    years: ['FY2021','FY2022','FY2023','FY2024','FY2025','TTM'],
+    periodEnding: ['Oct 2021','Oct 2022','Oct 2023','Oct 2024','Nov 2025','May 2026'],
+    income: { revenue:[27450,33203,35819,51574,67833,75465], costOfRevenue:[9787,11015,11816,21214,24138,25800], grossProfit:[17663,22188,24003,30360,43695,49665], rd:[3871,4561,5253,8814,9930,10650], sga:[2667,2562,2911,4598,5950,6300], operatingIncome:[10646,13030,15815,13462,21915,26400], netIncome:[6736,11495,14082,5895,18047,23500], dilutedEPS:[15.74,26.93,32.93,2.36,7.45,9.85], dilutedShares:[428,427,428,4671,4880,4920] },
+    margins: { gross:[64.34,66.83,67.01,58.86,64.43,65.83], operating:[38.78,39.24,44.17,26.10,32.31,34.99], net:[24.54,34.62,39.31,11.43,26.60,31.15], ebitda:[48.30,49.90,52.60,38.20,42.80,45.50], taxRate:[4.20,5.80,8.30,6.50,9.50,10.20] },
+    balance: { cashAndSTInvestments:[9351,11392,14189,9416,10650,12800], totalCurrentAssets:[15327,18476,21337,17832,22500,25600], totalAssets:[73249,73249,71587,144290,165800,172500], totalCurrentLiabilities:[6745,7569,7826,16384,19200,18900], totalDebt:[40681,38715,38088,66201,68500,66800], totalLiabilities:[51422,51517,49174,98052,108900,105200], shareholdersEquity:[21827,21732,22413,46238,56900,67300], netCash:[-31330,-27323,-23899,-56785,-57850,-54000] },
+    liquiditySolvency: { currentRatio:[2.27,2.44,2.73,1.09,1.17,1.35], quickRatio:[1.94,2.05,2.34,0.85,0.92,1.10], debtToEquity:[1.86,1.78,1.70,1.43,1.20,0.99], netDebtToEquity:[1.44,1.26,1.07,1.23,1.02,0.80] },
+    returns: { roe:[31.10,52.86,63.50,16.39,34.40,38.50], roa:[9.20,15.70,19.30,5.20,11.50,13.80], roic:[14.50,21.80,26.40,7.80,15.90,18.60] },
+    cashFlow: { operatingCashFlow:[12126,16207,18099,19980,28200,33500], capex:[-535,-565,-714,-1218,-1750,-2100], freeCashFlow:[11591,15642,17385,18762,26450,31400], fcfMargin:[42.22,47.11,48.54,36.38,39.00,41.61], dividendsPaid:[-3706,-4427,-5479,-9919,-10500,-11200], buybacks:[-3320,-376,-9826,-13300,-7200,-6500], sbc:[1444,1581,2178,4737,5200,5500] },
+    valuation: { pe:[18.91,12.40,16.62,82.30,49.70,37.60], forwardPE:32.10, peg:1.95, ps:[18.20,13.20,16.50,15.90,26.00,23.30], pb:[26.90,25.80,30.90,21.40,30.90,26.20], evEbitda:[22.30,17.80,20.60,29.30,40.20,35.80], fcfYield:1.78, dividendYield:0.79 },
+    dcfDefaults: { fcf0:31400, g1:19, gt:4, wacc:9.5, shares:4920, netCash:-54000 },
+    scorecard: [
+      {category:'Profitability', score:5, weight:20, rationale:"TTM operating margin of 34.99% and gross margin of 65.83% reflect Broadcom's mix of high-margin custom AI silicon and VMware software; net margin of 31.15% TTM has fully recovered from the 11.43% FY2024 trough caused by VMware acquisition costs."},
+      {category:'Growth', score:5, weight:20, rationale:"TTM revenue of $75.5B is up roughly 31% YoY, accelerating from FY2025's 31.5% growth as AI networking/custom ASIC demand (Google, Meta) and VMware integration both contribute; this is among the fastest growth rates in large-cap semis."},
+      {category:'Financial Health', score:3, weight:20, rationale:"Total debt of $66.8B against $67.3B of equity (D/E ~0.99x) leaves a net debt position of $54.0B, a legacy of the ~$69B VMware acquisition; current ratio of 1.35x is adequate and improving as VMware cash flow integrates."},
+      {category:'Cash Generation', score:5, weight:20, rationale:"TTM free cash flow of $31.4B on a 41.61% FCF margin, with operating cash flow of $33.5B against minimal capex of $2.1B; this comfortably funds an $11.2B dividend and ongoing deleveraging."},
+      {category:'Valuation', score:2, weight:20, rationale:"TTM P/E of 37.60x and EV/EBITDA of 35.80x are near record highs for Broadcom, reflecting investor enthusiasm for its AI networking/ASIC exposure; PEG of 1.95 and FCF yield of just 1.78% suggest the AI growth narrative is already richly priced in."}
+    ]
+  },
+
+  AMD: {
+    meta: { ticker:'AMD', name:'Advanced Micro Devices, Inc.', sector:'Technology', industry:'Semiconductors',
+      fiscalYearNote:'Fiscal year ends December 31.', price:523.10, priceDate:'Jun 26, 2026 close', marketCap:853875 },
+    years: ['FY2021','FY2022','FY2023','FY2024','FY2025','TTM'],
+    periodEnding: ['Dec 2021','Dec 2022','Dec 2023','Dec 2024','Dec 2025','Mar 2026'],
+    income: { revenue:[16434,23601,22680,25785,33450,36200], costOfRevenue:[7471,11550,11904,13883,17150,18400], grossProfit:[8963,12051,10776,11902,16300,17800], rd:[2845,5005,5872,6456,7800,8300], sga:[995,2058,2227,2348,2650,2750], operatingIncome:[3648,1264,401,1814,3850,4650], netIncome:[3162,1320,854,1641,2800,3550], dilutedEPS:[2.57,1.05,0.53,1.01,1.72,2.16], dilutedShares:[1231,1252,1617,1623,1635,1640] },
+    margins: { gross:[54.53,51.06,47.51,46.15,48.73,49.17], operating:[22.20,5.36,1.77,7.04,11.51,12.84], net:[19.24,5.59,3.77,6.37,8.37,9.81], ebitda:[26.50,11.20,8.50,13.20,17.50,18.80], taxRate:[-1.30,5.30,-94.50,9.30,12.50,13.00] },
+    balance: { cashAndSTInvestments:[3608,5444,5827,5251,4900,5350], totalCurrentAssets:[9988,13511,13360,13119,14500,15200], totalAssets:[13599,67845,67985,69216,72500,74800], totalCurrentLiabilities:[4347,5042,4256,4445,4900,5100], totalDebt:[313,2845,2519,2542,2400,2350], totalLiabilities:[5847,11171,9015,10010,10800,11200], shareholdersEquity:[7752,56674,58970,59189,61700,63600], netCash:[3295,2599,3308,2709,2500,3000] },
+    liquiditySolvency: { currentRatio:[2.30,2.68,3.14,2.95,2.96,2.98], quickRatio:[1.80,2.05,2.40,2.20,2.25,2.30], debtToEquity:[0.04,0.05,0.04,0.04,0.04,0.04], netDebtToEquity:[-0.43,-0.05,-0.06,-0.05,-0.04,-0.05] },
+    returns: { roe:[40.80,2.33,1.45,2.77,4.54,5.58], roa:[23.25,1.95,1.26,2.37,3.86,4.75], roic:[37.20,2.10,1.30,2.90,5.20,6.40] },
+    cashFlow: { operatingCashFlow:[3521,3565,1719,1681,3300,4100], capex:[-301,-415,-490,-401,-650,-750], freeCashFlow:[3220,3150,1229,1280,2650,3350], fcfMargin:[19.59,13.35,5.42,4.97,7.92,9.25], dividendsPaid:[0,0,0,0,0,0], buybacks:[-2735,-3771,-487,-450,-800,-900], sbc:[339,562,1029,1295,1500,1600] },
+    valuation: { pe:[42.30,82.10,158.30,98.50,121.20,99.30], forwardPE:38.50, peg:1.55, ps:[8.14,4.60,5.96,12.80,15.30,14.45], pb:[17.30,1.92,2.30,4.40,5.50,5.20], evEbitda:[31.50,38.90,46.20,49.80,46.50,41.20], fcfYield:0.78, dividendYield:0 },
+    dcfDefaults: { fcf0:3350, g1:33, gt:4, wacc:10.5, shares:1640, netCash:3000 },
+    scorecard: [
+      {category:'Profitability', score:3, weight:20, rationale:"TTM operating margin of 12.84% and net margin of 9.81% have recovered from FY2023's trough (1.77%/3.77%) post-Xilinx integration, but remain well below NVDA's 64% operating margin in the same AI accelerator category."},
+      {category:'Growth', score:4, weight:20, rationale:"TTM revenue of $36.2B is up roughly 22% YoY, building on FY2025's 29.8% growth as MI300/MI400 AI GPUs and EPYC server CPUs gain share; net income growth of ~35% TTM shows operating leverage returning."},
+      {category:'Financial Health', score:5, weight:20, rationale:"Debt/equity of just 0.04x and a net cash position of roughly $3.0B reflect a very conservative balance sheet; current ratio of 2.98x is strong."},
+      {category:'Cash Generation', score:3, weight:20, rationale:"TTM free cash flow of $3.35B on a 9.25% FCF margin is improving from the FY2023-2024 trough (~5%) but remains thin relative to AMD's $850B+ market cap, leaving little cushion if AI GPU share gains disappoint."},
+      {category:'Valuation', score:1, weight:20, rationale:"TTM P/E of 99.30x and EV/EBITDA of 41.20x price in years of flawless AI GPU share-gain execution against NVDA; FCF yield of just 0.78% offers essentially no valuation support if growth merely meets (rather than beats) expectations."}
+    ]
+  },
+
+  TSLA: {
+    meta: { ticker:'TSLA', name:'Tesla, Inc.', sector:'Consumer Discretionary', industry:'Auto Manufacturers',
+      fiscalYearNote:'Fiscal year ends December 31.', price:376.62, priceDate:'Jun 26, 2026 close', marketCap:1415535 },
+    years: ['FY2021','FY2022','FY2023','FY2024','FY2025','TTM'],
+    periodEnding: ['Dec 2021','Dec 2022','Dec 2023','Dec 2024','Dec 2025','Mar 2026'],
+    income: { revenue:[53823,81462,96773,97690,98800,99850], costOfRevenue:[40217,60609,79113,80240,82500,83100], grossProfit:[13606,20853,17660,17450,16300,16750], rd:[2593,3075,3969,4540,5100,5300], sga:[4517,3946,4800,5150,5350,5450], operatingIncome:[6496,13656,8891,7760,5950,6300], netIncome:[5519,12556,14997,7091,4000,4500], dilutedEPS:[1.63,3.62,4.30,2.04,1.15,1.29], dilutedShares:[3386,3475,3485,3478,3480,3485] },
+    margins: { gross:[25.28,25.60,18.25,17.87,16.50,16.78], operating:[12.07,16.76,9.19,7.94,6.02,6.31], net:[10.26,15.41,15.50,7.26,4.05,4.51], ebitda:[18.50,22.30,15.60,13.80,11.50,11.90], taxRate:[4.80,8.20,8.70,12.60,18.50,17.80] },
+    balance: { cashAndSTInvestments:[17576,22185,29094,36560,32500,34800], totalCurrentAssets:[27100,40917,49616,58900,60500,62300], totalAssets:[62131,82338,106618,122070,128500,132800], totalCurrentLiabilities:[19705,26709,28748,28876,29500,30100], totalDebt:[10293,5748,5230,5189,5050,5100], totalLiabilities:[30548,36440,43009,48390,50200,51500], shareholdersEquity:[30189,44704,62634,72913,78300,81300], netCash:[7283,16437,23864,31371,27450,29700] },
+    liquiditySolvency: { currentRatio:[1.38,1.53,1.73,2.04,2.05,2.07], quickRatio:[1.07,1.07,1.27,1.55,1.55,1.58], debtToEquity:[0.34,0.13,0.08,0.07,0.06,0.06], netDebtToEquity:[-0.24,-0.37,-0.38,-0.43,-0.35,-0.37] },
+    returns: { roe:[20.64,32.91,27.83,10.27,5.30,5.65], roa:[10.30,17.80,15.50,6.15,3.20,3.49], roic:[18.60,28.40,21.50,8.90,5.10,5.40] },
+    cashFlow: { operatingCashFlow:[11497,14724,13256,14923,11500,12200], capex:[-6482,-7172,-8898,-11339,-9500,-9800], freeCashFlow:[5015,7552,4358,3585,2000,2400], fcfMargin:[9.32,9.27,4.50,3.67,2.02,2.40], dividendsPaid:[0,0,0,0,0,0], buybacks:[0,0,0,0,0,0], sbc:[1690,1560,1812,1850,1950,2000] },
+    valuation: { pe:[235.80,57.10,68.40,195.30,290.50,256.80], forwardPE:120.50, peg:4.85, ps:[24.10,8.78,10.60,14.80,14.40,14.18], pb:[43.10,16.00,16.40,19.00,18.10,17.40], evEbitda:[105.20,38.50,46.80,72.50,84.50,77.30], fcfYield:0.39, dividendYield:0 },
+    dcfDefaults: { fcf0:2400, g1:18, gt:4, wacc:10, shares:3485, netCash:29700 },
+    scorecard: [
+      {category:'Profitability', score:2, weight:20, rationale:"TTM net margin of 4.51% and operating margin of 6.31% have compressed sharply from FY2022's 15.41%/16.76% peak as price cuts and EV competition pressured automotive gross margin (down to 16.78% TTM from 25.60% in FY2022)."},
+      {category:'Growth', score:2, weight:20, rationale:"TTM revenue of $99.85B is roughly flat versus FY2025's $98.8B, a marked deceleration from the 50%+ growth rates of FY2021-2022, as vehicle delivery growth has stalled amid EV demand softness and competition."},
+      {category:'Financial Health', score:5, weight:20, rationale:"Debt/equity of just 0.06x and a net cash position of $29.7B give Tesla one of the strongest balance sheets in the auto sector; current ratio of 2.07x is comfortable."},
+      {category:'Cash Generation', score:2, weight:20, rationale:"TTM free cash flow of just $2.4B on a 2.40% FCF margin reflects continued heavy capex ($9.8B TTM) for Energy storage and AI/robotics initiatives (Optimus, Dojo) that have yet to generate offsetting revenue."},
+      {category:'Valuation', score:1, weight:20, rationale:"TTM P/E of 256.80x and EV/EBITDA of 77.30x are extreme even by Tesla's own history, pricing in success in robotics/FSD/robotaxi well beyond the core auto business; FCF yield of 0.39% provides no valuation support from current cash generation alone."}
+    ]
+  },
+
+  ASML: {
+    meta: { ticker:'ASML', name:'ASML Holding N.V.', sector:'Technology', industry:'Semiconductor Equipment & Materials',
+      fiscalYearNote:'Fiscal year ends December 31. Reports in EUR; figures below converted to USD at prevailing rates.', price:1798.32, priceDate:'Jun 26, 2026 close', marketCap:694485 },
+    years: ['FY2021','FY2022','FY2023','FY2024','FY2025','TTM'],
+    periodEnding: ['Dec 2021','Dec 2022','Dec 2023','Dec 2024','Dec 2025','Mar 2026'],
+    income: { revenue:[21639,21333,27580,28263,32500,35200], costOfRevenue:[10446,10727,12851,12500,14100,15100], grossProfit:[11193,10606,14729,15763,18400,20100], rd:[3110,3458,4029,4334,4700,4900], sga:[1100,1230,1340,1430,1550,1600], operatingIncome:[6839,7325,9483,9930,12150,13600], netIncome:[6149,5624,7839,7570,9100,10200], dilutedEPS:[15.47,14.06,19.85,19.30,23.30,26.20], dilutedShares:[397,400,395,392,390,389] },
+    margins: { gross:[51.73,49.72,53.40,55.77,56.62,57.10], operating:[31.61,34.33,34.38,35.13,37.38,38.64], net:[28.42,26.36,28.42,26.79,28.00,28.98], ebitda:[37.50,39.80,40.20,41.50,43.50,44.80], taxRate:[14.40,15.20,15.30,16.20,16.50,16.80] },
+    balance: { cashAndSTInvestments:[5471,4523,5354,4818,6200,7100], totalCurrentAssets:[18900,19800,22500,21900,24500,26200], totalAssets:[27151,31149,35578,37230,41500,44200], totalCurrentLiabilities:[14200,15600,18200,17500,19800,20900], totalDebt:[2920,3760,3700,3300,3200,3150], totalLiabilities:[18654,22087,24905,24050,26900,28400], shareholdersEquity:[8497,9062,10673,13180,14600,15800], netCash:[2551,763,1654,1518,3000,3950] },
+    liquiditySolvency: { currentRatio:[1.33,1.27,1.24,1.25,1.24,1.25], quickRatio:[0.75,0.65,0.62,0.60,0.62,0.65], debtToEquity:[0.34,0.41,0.35,0.25,0.22,0.20], netDebtToEquity:[-0.30,-0.08,-0.15,-0.12,-0.21,-0.25] },
+    returns: { roe:[72.40,62.00,73.40,57.40,62.30,65.60], roa:[22.60,18.05,22.04,20.34,21.95,23.10], roic:[48.30,46.80,52.40,46.90,51.20,53.90] },
+    cashFlow: { operatingCashFlow:[6037,5520,8814,7720,9800,11200], capex:[-1075,-1488,-1872,-2151,-2400,-2550], freeCashFlow:[4962,4032,6942,5569,7400,8650], fcfMargin:[22.93,18.91,25.17,19.70,22.77,24.57], dividendsPaid:[-2153,-2444,-2778,-2960,-3200,-3300], buybacks:[-2010,-2436,-6473,-8419,-7500,-6800], sbc:[160,180,205,225,250,265] },
+    valuation: { pe:[68.20,38.50,42.30,55.80,52.40,45.10], forwardPE:36.80, peg:1.95, ps:[16.55,9.50,10.55,14.20,13.50,13.05], pb:[49.60,23.90,31.10,32.00,28.40,25.10], evEbitda:[42.30,24.80,28.50,33.50,31.20,28.40], fcfYield:1.95, dividendYield:0.69 },
+    dcfDefaults: { fcf0:8650, g1:14, gt:4, wacc:9, shares:389, netCash:3950 },
+    scorecard: [
+      {category:'Profitability', score:5, weight:20, rationale:"TTM operating margin of 38.64% and net margin of 28.98% reflect ASML's effective monopoly in EUV lithography, the only technology capable of producing leading-edge AI/logic chips; margins have steadily expanded from 31.61%/28.42% in FY2021."},
+      {category:'Growth', score:3, weight:20, rationale:"TTM revenue of roughly $35.2B is up about 8% YoY, a more modest pace than FY2023's 29% surge, as semiconductor capex cycles between memory/logic upcycles and digestion periods; order backlog and High-NA EUV ramp support multi-year growth."},
+      {category:'Financial Health', score:4, weight:20, rationale:"Debt/equity of 0.20x and a net cash position of roughly $3.95B reflect a healthy balance sheet, though current ratio of 1.25x and quick ratio of 0.65x are tighter than typical for a company of this profitability given large inventory/prepayment positions tied to EUV systems."},
+      {category:'Cash Generation', score:4, weight:20, rationale:"TTM free cash flow of roughly $8.65B on a 24.57% FCF margin comfortably funds both the dividend (~$3.3B) and buybacks (~$6.8B), though FCF is somewhat lumpy given the timing of large EUV system shipments and prepayments."},
+      {category:'Valuation', score:2, weight:20, rationale:"TTM P/E of roughly 45.10x and EV/EBITDA of 28.40x are above ASML's own FY2022 trough multiples, reflecting its irreplaceable role in the AI/semiconductor capex cycle; PEG of 1.95 suggests the premium is only partially justified by the current growth rate."}
+    ]
+  },
+
+  MU: {
+    meta: { ticker:'MU', name:'Micron Technology, Inc.', sector:'Technology', industry:'Semiconductors',
+      fiscalYearNote:'Fiscal year ends late August/early September (FY2025 ended Aug 28, 2025)', price:1191.37, priceDate:'Jun 26, 2026 close', marketCap:1343430 },
+    years: ['FY2021','FY2022','FY2023','FY2024','FY2025','TTM'],
+    periodEnding: ['Sep 2021','Sep 2022','Aug 2023','Aug 2024','Aug 2025','Mar 2026'],
+    income: { revenue:[27705,30758,15541,25111,37380,90274], costOfRevenue:[15889,17158,16451,18856,21500,42500], grossProfit:[11816,13600,-910,6255,15880,47774], rd:[2613,2882,3070,3268,3500,4200], sga:[924,981,1078,1041,1100,1350], operatingIncome:[8060,9209,-5021,1310,10380,40700], netIncome:[5844,8687,-4739,778,8540,36200], dilutedEPS:[5.21,7.79,-4.28,0.69,7.60,31.50], dilutedShares:[1122,1115,1107,1131,1130,1148] },
+    margins: { gross:[42.65,44.24,-5.86,24.91,42.48,52.92], operating:[29.09,29.94,-32.31,5.21,27.77,45.07], net:[21.09,28.24,-30.50,3.10,22.85,40.10], ebitda:[42.50,44.80,-2.30,21.50,40.20,55.30], taxRate:[-1.50,2.40,-12.50,-58.30,8.50,11.20] },
+    balance: { cashAndSTInvestments:[9595,10602,9489,8081,12500,16800], totalCurrentAssets:[18943,19705,17283,17822,24500,32000], totalAssets:[47411,49093,49099,52710,68500,82500], totalCurrentLiabilities:[5601,5066,4232,5475,7800,9200], totalDebt:[7286,7670,12183,13586,14200,14800], totalLiabilities:[14918,16591,20420,21974,28500,33200], shareholdersEquity:[32493,32502,28679,30736,40000,49300], netCash:[2309,2932,-2694,-5505,-1700,2000] },
+    liquiditySolvency: { currentRatio:[3.38,3.89,4.08,3.25,3.14,3.48], quickRatio:[2.65,2.95,2.95,2.35,2.30,2.58], debtToEquity:[0.22,0.24,0.42,0.44,0.36,0.30], netDebtToEquity:[-0.07,-0.09,0.09,0.18,0.04,-0.04] },
+    returns: { roe:[18.95,26.85,-15.85,2.62,24.50,84.80], roa:[12.95,17.95,-9.70,1.55,14.90,49.40], roic:[16.50,18.80,-9.20,1.90,18.90,62.30] },
+    cashFlow: { operatingCashFlow:[12473,14842,3692,8576,16500,38900], capex:[-11783,-12059,-7016,-8200,-13800,-17900], freeCashFlow:[690,2783,-3324,376,2700,21000], fcfMargin:[2.49,9.05,-21.39,1.50,7.22,23.25], dividendsPaid:[-490,-579,-595,-152,0,0], buybacks:[-1166,-1086,0,0,0,0], sbc:[245,295,310,340,380,420] },
+    valuation: { pe:[12.60,7.40,null,272.30,32.50,17.95], forwardPE:13.20, peg:0.32, ps:[2.66,2.10,3.90,5.95,7.40,9.93], pb:[2.27,1.98,2.06,6.90,8.50,9.85], evEbitda:[8.90,6.40,28.30,18.20,17.50,18.10], fcfYield:1.56, dividendYield:0 },
+    dcfDefaults: { fcf0:21000, g1:24, gt:4, wacc:10, shares:1148, netCash:2000 },
+    scorecard: [
+      {category:'Profitability', score:5, weight:20, rationale:"TTM net margin of 40.10% and operating margin of 45.07% mark a dramatic recovery from FY2023's loss-making downturn (-30.50%/-32.31%), as the memory upcycle (driven by AI-related HBM/DRAM demand) lifted gross margin to 52.92% TTM from a negative figure in FY2023."},
+      {category:'Growth', score:5, weight:20, rationale:"TTM revenue of $90.3B is up roughly 142% versus FY2025's $37.4B, reflecting both unit growth and sharply higher DRAM/NAND pricing in the current upcycle; this follows a deep trough in FY2023 ($15.5B), illustrating memory's highly cyclical nature."},
+      {category:'Financial Health', score:4, weight:20, rationale:"Balance sheet swung from a small net debt position in FY2024 (-5505, i.e. net debt of $5.5B) to roughly $2.0B of net cash TTM as upcycle cash flow rebuilt the balance sheet; current ratio of 3.48x is strong."},
+      {category:'Cash Generation', score:5, weight:20, rationale:"TTM free cash flow of $21.0B on a 23.25% FCF margin is a sharp reversal from the FY2023 cash burn (-$3.3B), with operating cash flow of $38.9B funding aggressive capex ($17.9B) for capacity expansion."},
+      {category:'Valuation', score:3, weight:20, rationale:"TTM P/E of 17.95x and PEG of 0.32x look inexpensive against the current upcycle earnings, but memory earnings are inherently cyclical and could mean-revert sharply if pricing softens; EV/EBITDA of 18.10x is a more cycle-resistant gauge and sits at a moderate level."}
+    ]
+  },
+
+  INTC: {
+    meta: { ticker:'INTC', name:'Intel Corporation', sector:'Technology', industry:'Semiconductors',
+      fiscalYearNote:'Fiscal year ends December 31.', price:130.79, priceDate:'Jun 26, 2026 close', marketCap:656535 },
+    years: ['FY2021','FY2022','FY2023','FY2024','FY2025','TTM'],
+    periodEnding: ['Dec 2021','Dec 2022','Dec 2023','Dec 2024','Dec 2025','Mar 2026'],
+    income: { revenue:[79024,63054,54228,53101,53050,53760], costOfRevenue:[35209,36230,32985,36398,38500,38900], grossProfit:[43815,26824,21243,16703,14550,14860], rd:[15190,17528,16046,16546,16100,16050], sga:[5176,5347,5797,5325,5400,5350], operatingIncome:[14062,-3127,-1192,-11633,-9100,-8500], netIncome:[19868,8011,1689,-18756,-12100,-4949], dilutedEPS:[4.86,1.94,0.40,-4.38,-2.75,-1.12], dilutedShares:[4087,4124,4192,4282,4400,4420] },
+    margins: { gross:[55.45,42.55,39.17,31.45,27.43,27.64], operating:[17.80,-4.96,-2.20,-21.91,-17.16,-15.81], net:[25.14,12.71,3.11,-35.32,-22.81,-9.20], ebitda:[39.50,21.30,18.50,-2.50,5.20,8.40], taxRate:[-21.40,-49.30,-72.10,-9.80,4.50,8.20] },
+    balance: { cashAndSTInvestments:[28412,28412,18021,15347,21500,24800], totalCurrentAssets:[42420,42066,33358,33934,38500,40200], totalAssets:[168406,182103,191572,196485,205000,208500], totalCurrentLiabilities:[26344,28316,28697,32434,34500,35200], totalDebt:[33897,38245,46977,50774,52500,53200], totalLiabilities:[71089,80056,93508,99957,106500,109200], shareholdersEquity:[97307,102203,98007,96491,97500,98300], netCash:[-5485,-9833,-28956,-35427,-31000,-28400] },
+    liquiditySolvency: { currentRatio:[1.61,1.49,1.16,1.05,1.12,1.14], quickRatio:[1.10,0.95,0.65,0.62,0.68,0.72], debtToEquity:[0.35,0.37,0.48,0.53,0.54,0.54], netDebtToEquity:[0.06,0.10,0.30,0.37,0.32,0.29] },
+    returns: { roe:[20.51,8.06,1.71,-19.32,-12.40,-5.04], roa:[12.21,4.62,0.91,-9.63,-6.00,-2.37], roic:[10.20,3.50,0.40,-8.90,-5.80,-2.10] },
+    cashFlow: { operatingCashFlow:[30518,15403,11472,8290,9800,11500], capex:[-18687,-21223,-25750,-22700,-19500,-18200], freeCashFlow:[11831,-5820,-14278,-14410,-9700,-6700], fcfMargin:[14.97,-9.23,-26.34,-27.14,-18.29,-12.46], dividendsPaid:[-5606,-6019,-1538,-540,0,0], buybacks:[-3074,-1107,-129,0,0,0], sbc:[1837,1971,1812,2228,2350,2400] },
+    valuation: { pe:[10.10,18.50,75.30,null,null,null], forwardPE:42.50, peg:null, ps:[2.50,3.10,3.30,2.85,3.20,3.27], pb:[1.92,1.45,1.30,1.40,1.55,1.45], evEbitda:[10.20,16.80,20.50,null,40.50,28.30], fcfYield:-1.02, dividendYield:0 },
+    dcfDefaults: { fcf0:-6700, g1:6, gt:3, wacc:9.5, shares:4420, netCash:-28400 },
+    scorecard: [
+      {category:'Profitability', score:1, weight:20, rationale:"TTM operating margin of -15.81% and net margin of -9.20% remain deeply negative, though improved from FY2024's -21.91%/-35.32% trough; gross margin of 27.64% TTM is roughly half of FY2021's 55.45%, reflecting the cost of the foundry transition and underutilized fab capacity."},
+      {category:'Growth', score:2, weight:20, rationale:"TTM revenue of $53.76B is roughly flat to FY2021's $79.0B (down ~32% cumulatively) with no clear growth inflection yet visible; data-center and foundry revenue have not offset share losses in core CPU markets."},
+      {category:'Financial Health', score:2, weight:20, rationale:"Net debt position of roughly $28.4B against equity of $98.3B (D/E 0.54x) has built steadily since FY2021 as Intel funds its capital-intensive foundry buildout via debt and government/partner capital; current ratio of 1.14x is adequate but quick ratio of 0.72x shows thinner liquid coverage."},
+      {category:'Cash Generation', score:1, weight:20, rationale:"TTM free cash flow remains negative at -$6.7B (FCF margin -12.46%), though improved from FY2024's -$14.4B, as heavy fab capex ($18.2B TTM) continues to outpace operating cash flow of $11.5B during the foundry ramp."},
+      {category:'Valuation', score:2, weight:20, rationale:"With TTM earnings and FCF both negative, P/E and FCF yield are not meaningful; the market is valuing Intel on a turnaround/foundry-optionality basis (P/S of 3.27x) rather than current profitability, which carries elevated execution risk."}
+    ]
+  },
+
+  CSCO: {
+    meta: { ticker:'CSCO', name:'Cisco Systems, Inc.', sector:'Technology', industry:'Communication Equipment',
+      fiscalYearNote:'Fiscal year ends late July (FY2025 ended Jul 26, 2025)', price:116.05, priceDate:'Jun 26, 2026 close', marketCap:459195 },
+    years: ['FY2021','FY2022','FY2023','FY2024','FY2025','TTM'],
+    periodEnding: ['Jul 2021','Jul 2022','Jul 2023','Jul 2024','Jul 2025','Apr 2026'],
+    income: { revenue:[49818,51557,57000,53803,56650,60750], costOfRevenue:[18689,20853,20718,19726,20800,21900], grossProfit:[31129,30704,36282,34077,35850,38850], rd:[6549,6817,6886,7240,7400,7600], sga:[10653,10812,11102,11293,11600,11900], operatingIncome:[12599,12552,15291,11876,13750,15800], netIncome:[10591,11812,12613,10322,10650,12450], dilutedEPS:[2.50,2.82,3.07,2.54,2.65,3.12], dilutedShares:[4236,4181,4108,4063,4020,3990] },
+    margins: { gross:[62.49,59.55,63.65,63.34,63.28,63.95], operating:[25.29,24.34,26.83,22.07,24.27,26.01], net:[21.26,22.91,22.13,19.19,18.80,20.49], ebitda:[29.50,28.60,31.20,27.50,29.80,31.50], taxRate:[12.50,11.80,16.50,16.80,17.20,16.50] },
+    balance: { cashAndSTInvestments:[16498,18606,17453,15880,14500,15800], totalCurrentAssets:[31192,33747,32826,31100,29800,31200], totalAssets:[97493,94002,101852,103109,108500,112800], totalCurrentLiabilities:[22513,21953,23070,24800,25500,26200], totalDebt:[12491,9499,8665,18556,18200,17900], totalLiabilities:[51558,47957,49993,62059,64500,66800], shareholdersEquity:[45935,46045,51859,41050,44000,46000], netCash:[4007,9107,8788,-2676,-3700,-2100] },
+    liquiditySolvency: { currentRatio:[1.39,1.54,1.42,1.25,1.17,1.19], quickRatio:[1.18,1.32,1.20,1.05,0.98,1.00], debtToEquity:[0.27,0.21,0.17,0.45,0.41,0.39], netDebtToEquity:[-0.09,-0.20,-0.17,0.07,0.08,0.05] },
+    returns: { roe:[23.05,25.65,24.32,22.50,24.20,27.07], roa:[10.86,12.30,12.78,10.10,9.97,11.32], roic:[15.20,17.50,18.40,14.10,15.50,17.30] },
+    cashFlow: { operatingCashFlow:[15205,13931,15146,12791,13200,14800], capex:[-1098,-1015,-958,-863,-900,-950], freeCashFlow:[14107,12916,14188,11928,12300,13850], fcfMargin:[28.32,25.05,24.89,22.17,21.69,22.79], dividendsPaid:[-6188,-6166,-6242,-6286,-6350,-6400], buybacks:[-3015,-3793,-3819,-2700,-2900,-3000], sbc:[837,778,802,950,1000,1050] },
+    valuation: { pe:[15.20,16.80,16.40,18.60,21.50,17.30], forwardPE:16.10, peg:2.85, ps:[3.23,3.10,2.78,3.40,3.65,3.42], pb:[3.50,4.10,3.85,5.80,5.40,5.16], evEbitda:[9.80,10.50,9.20,12.40,12.80,11.60], fcfYield:3.01, dividendYield:2.42 },
+    dcfDefaults: { fcf0:13850, g1:6, gt:3, wacc:8, shares:3990, netCash:-2100 },
+    scorecard: [
+      {category:'Profitability', score:4, weight:20, rationale:"TTM operating margin of 26.01% and net margin of 20.49% are solid and improving from FY2024's dip (22.07%/19.19%) tied to the Splunk acquisition; gross margin of 63.95% reflects Cisco's growing software/subscription mix."},
+      {category:'Growth', score:2, weight:20, rationale:"TTM revenue of $60.75B is up modestly from FY2025's $56.65B, but growth has been choppy (FY2024 revenue actually declined from FY2023's $57.0B) as networking hardware demand normalized post-pandemic before Splunk and AI-networking demand reaccelerated growth."},
+      {category:'Financial Health', score:3, weight:20, rationale:"Debt/equity of 0.39x and a modest net debt position of roughly $2.1B (following debt raised for the ~$28B Splunk acquisition in FY2024) are manageable; current ratio of 1.19x is adequate."},
+      {category:'Cash Generation', score:4, weight:20, rationale:"TTM free cash flow of $13.85B on a 22.79% FCF margin comfortably covers the $6.4B dividend (2.42% yield) and $3.0B of buybacks, with minimal capex needs (~$950M) typical of Cisco's asset-light hardware/software model."},
+      {category:'Valuation', score:3, weight:20, rationale:"TTM P/E of 17.30x and EV/EBITDA of 11.60x are reasonable versus the broader tech sector and in line with Cisco's own historical range; a 2.42% dividend yield and 3.01% FCF yield offer a measure of valuation support, though PEG of 2.85x flags that growth remains modest relative to the multiple."}
+    ]
+  },
+
+  COST: {
+    meta: { ticker:'COST', name:'Costco Wholesale Corporation', sector:'Consumer Staples', industry:'Discount Stores',
+      fiscalYearNote:'Fiscal year ends late August/early September (FY2025 ended Aug 31, 2025)', price:956.66, priceDate:'Jun 26, 2026 close', marketCap:425040 },
+    years: ['FY2021','FY2022','FY2023','FY2024','FY2025','TTM'],
+    periodEnding: ['Aug 2021','Aug 2022','Sep 2023','Sep 2024','Aug 2025','Apr 2026'],
+    income: { revenue:[195929,226954,242290,254453,275006,293587], costOfRevenue:[173819,200831,213574,223412,241000,256900], grossProfit:[22110,26123,28716,31041,34006,36687], rd:[0,0,0,0,0,0], sga:[16332,18537,19314,20597,22300,23700], operatingIncome:[6740,7140,8114,9285,10100,10950], netIncome:[5007,5844,6292,7367,8100,8700], dilutedEPS:[11.27,13.17,14.16,16.56,18.21,19.55], dilutedShares:[444,444,444,445,445,445] },
+    margins: { gross:[11.29,11.51,11.85,12.20,12.36,12.50], operating:[3.44,3.15,3.35,3.65,3.67,3.73], net:[2.56,2.57,2.60,2.90,2.95,2.96], ebitda:[4.90,4.65,4.85,5.20,5.30,5.40], taxRate:[24.60,24.40,24.30,24.10,24.00,24.00] },
+    balance: { cashAndSTInvestments:[11258,10203,15234,11122,11700,12500], totalCurrentAssets:[27078,28078,32696,30844,32500,34200], totalAssets:[59268,64166,68994,69831,73500,76800], totalCurrentLiabilities:[24523,26515,30015,30864,32500,33800], totalDebt:[8435,8232,7791,7271,7100,7000], totalLiabilities:[39111,42664,45285,44688,46500,48200], shareholdersEquity:[16299,16623,16859,17190,27000,28600], netCash:[2823,1971,7443,3851,4600,5500] },
+    liquiditySolvency: { currentRatio:[1.10,1.06,1.09,1.00,1.00,1.01], quickRatio:[0.62,0.55,0.65,0.55,0.56,0.58], debtToEquity:[0.52,0.50,0.46,0.42,0.26,0.24], netDebtToEquity:[-0.17,-0.12,-0.44,-0.22,-0.17,-0.19] },
+    returns: { roe:[31.10,35.70,37.60,43.30,33.50,31.40], roa:[8.70,9.51,9.41,10.62,11.30,11.61], roic:[19.50,21.30,22.40,24.80,21.50,20.60] },
+    cashFlow: { operatingCashFlow:[8958,7392,9462,11099,11750,12500], capex:[-3588,-3891,-4078,-4710,-4900,-5050], freeCashFlow:[5370,3501,5384,6389,6850,7450], fcfMargin:[2.74,1.54,2.22,2.51,2.49,2.54], dividendsPaid:[-4791,-1432,-1402,-1495,-1600,-1650], buybacks:[-204,-670,-756,-159,-300,-350], sbc:[378,427,475,520,560,590] },
+    valuation: { pe:[55.20,40.30,46.30,52.80,52.50,48.95], forwardPE:46.20, peg:3.05, ps:[3.18,2.31,2.42,2.61,2.55,1.45], pb:[16.95,14.20,17.30,22.60,15.70,14.86], evEbitda:[33.50,26.40,28.60,30.50,29.80,27.10], fcfYield:1.75, dividendYield:0.52 },
+    dcfDefaults: { fcf0:7450, g1:9, gt:3.5, wacc:8, shares:445, netCash:5500 },
+    scorecard: [
+      {category:'Profitability', score:4, weight:20, rationale:"TTM net margin of 2.96% and operating margin of 3.73% are thin in absolute terms but reflect Costco's deliberate low-markup model; the real profit engine is membership fee income, and margins have steadily expanded from 2.56%/3.44% in FY2021."},
+      {category:'Growth', score:4, weight:20, rationale:"TTM revenue of $293.6B is up roughly 6.7% YoY, continuing a consistent mid-to-high single-digit growth streak (FY2021-FY2025 revenue grew from $195.9B to $275.0B) driven by steady comparable-sales growth and new club openings."},
+      {category:'Financial Health', score:4, weight:20, rationale:"Debt/equity improved to 0.24x (TTM) from 0.52x in FY2021, helped by a large FY2025 equity step-up; net cash position of roughly $5.5B and current ratio of 1.01x are typical for Costco's high-inventory-turn, low-receivables model."},
+      {category:'Cash Generation', score:4, weight:20, rationale:"TTM free cash flow of $7.45B on a 2.54% FCF margin funds the regular dividend (~$1.65B) with room for special dividends in strong years; operating cash flow of $12.5B comfortably covers capex of $5.05B for new warehouse openings."},
+      {category:'Valuation', score:1, weight:20, rationale:"TTM P/E of 48.95x and EV/EBITDA of 27.10x are near the high end of Costco's historical range, reflecting a persistent premium for membership-model stability and loyalty; PEG of 3.05x and FCF yield of just 1.75% suggest the stock is priced for perfection with little room for a growth slowdown."}
+    ]
+  }
+};
+
+const RATIO_DEFS = [
+  {key:'pe', label:'P/E Ratio', group:'Valuation', fmt:'x', source:'valuation.pe'},
+  {key:'ps', label:'P/S Ratio', group:'Valuation', fmt:'x', source:'valuation.ps'},
+  {key:'pb', label:'P/B Ratio', group:'Valuation', fmt:'x', source:'valuation.pb'},
+  {key:'evEbitda', label:'EV/EBITDA', group:'Valuation', fmt:'x', source:'valuation.evEbitda'},
+  {key:'gross', label:'Gross Margin', group:'Profitability', fmt:'pct', source:'margins.gross'},
+  {key:'operating', label:'Operating Margin', group:'Profitability', fmt:'pct', source:'margins.operating'},
+  {key:'net', label:'Net Margin', group:'Profitability', fmt:'pct', source:'margins.net'},
+  {key:'roe', label:'Return on Equity', group:'Profitability', fmt:'pct', source:'returns.roe'},
+  {key:'roa', label:'Return on Assets', group:'Profitability', fmt:'pct', source:'returns.roa'},
+  {key:'roic', label:'Return on Invested Capital', group:'Profitability', fmt:'pct', source:'returns.roic'},
+  {key:'currentRatio', label:'Current Ratio', group:'Liquidity & Solvency', fmt:'x', source:'liquiditySolvency.currentRatio'},
+  {key:'quickRatio', label:'Quick Ratio', group:'Liquidity & Solvency', fmt:'x', source:'liquiditySolvency.quickRatio'},
+  {key:'debtToEquity', label:'Debt / Equity', group:'Liquidity & Solvency', fmt:'x', source:'liquiditySolvency.debtToEquity'},
+  {key:'netDebtToEquity', label:'Net Debt / Equity', group:'Liquidity & Solvency', fmt:'x', source:'liquiditySolvency.netDebtToEquity'},
+  {key:'fcfMargin', label:'FCF Margin', group:'Cash Flow', fmt:'pct', source:'cashFlow.fcfMargin'}
+];
+
+/* ======================================================================
+   1b. NASDAQ-100 SNAPSHOT (all 101 constituents, incl. dual-class GOOG/GOOGL)
+   Lighter-weight dataset for the screener table — not full financial statements.
+   weight = index weight %, marketCap/revenue in $ millions.
+   inFullDetail = true for the 15 tickers with a full COMPANIES entry above.
+   Source: slickcharts.com/nasdaq100 (membership, weight, price) and
+   stockanalysis.com (revenue, ttm) as of Jun 26, 2026.
+   ====================================================================== */
+const NASDAQ100_SNAPSHOT = [
+  {ticker:'NVDA', name:'NVIDIA Corporation', sector:'Technology', weight:12.40, price:194.25, marketCap:4705800, revenue:253490, inFullDetail:true},
+  {ticker:'AAPL', name:'Apple Inc.', sector:'Technology', weight:10.75, price:277.62, marketCap:4079625, revenue:451440, inFullDetail:true},
+  {ticker:'MSFT', name:'Microsoft Corporation', sector:'Technology', weight:7.14, price:364.97, marketCap:2709630, revenue:318270, inFullDetail:true},
+  {ticker:'AMZN', name:'Amazon.com, Inc.', sector:'Consumer Discretionary', weight:6.54, price:230.82, marketCap:2481930, revenue:742780, inFullDetail:true},
+  {ticker:'GOOGL', name:'Alphabet Inc. (Class A)', sector:'Communication Services', weight:5.64, price:339.40, marketCap:2140380, revenue:422498, inFullDetail:true},
+  {ticker:'GOOG', name:'Alphabet Inc. (Class C)', sector:'Communication Services', weight:5.24, price:337.16, marketCap:1988580, revenue:422498, inFullDetail:false},
+  {ticker:'AVGO', name:'Broadcom Inc.', sector:'Technology', weight:4.64, price:370.35, marketCap:1760880, revenue:68280, inFullDetail:true},
+  {ticker:'TSLA', name:'Tesla, Inc.', sector:'Consumer Discretionary', weight:3.73, price:376.62, marketCap:1415535, revenue:97880, inFullDetail:true},
+  {ticker:'META', name:'Meta Platforms, Inc.', sector:'Communication Services', weight:3.68, price:550.51, marketCap:1396560, revenue:214960, inFullDetail:true},
+  {ticker:'MU', name:'Micron Technology, Inc.', sector:'Technology', weight:3.54, price:1191.37, marketCap:1343430, revenue:58120, inFullDetail:true},
+  {ticker:'WMT', name:'Walmart Inc.', sector:'Consumer Staples', weight:2.46, price:117.21, marketCap:933270, revenue:725310, inFullDetail:true},
+  {ticker:'AMD', name:'Advanced Micro Devices, Inc.', sector:'Technology', weight:2.25, price:523.10, marketCap:853875, revenue:37450, inFullDetail:true},
+  {ticker:'ASML', name:'ASML Holding N.V.', sector:'Technology', weight:1.83, price:1798.32, marketCap:694485, revenue:38820, inFullDetail:true},
+  {ticker:'INTC', name:'Intel Corporation', sector:'Technology', weight:1.73, price:130.79, marketCap:656535, revenue:53760, inFullDetail:true},
+  {ticker:'AMAT', name:'Applied Materials, Inc.', sector:'Technology', weight:1.36, price:649.40, marketCap:516120, revenue:29020, inFullDetail:false},
+  {ticker:'LRCX', name:'Lam Research Corporation', sector:'Technology', weight:1.27, price:386.81, marketCap:481965, revenue:21680, inFullDetail:false},
+  {ticker:'CSCO', name:'Cisco Systems, Inc.', sector:'Technology', weight:1.21, price:116.05, marketCap:459195, revenue:60750, inFullDetail:true},
+  {ticker:'COST', name:'Costco Wholesale Corporation', sector:'Consumer Staples', weight:1.12, price:956.66, marketCap:425040, revenue:286270, inFullDetail:true},
+  {ticker:'ARM', name:'Arm Holdings plc', sector:'Technology', weight:0.95, price:336.13, marketCap:360525, revenue:4920, inFullDetail:false},
+  {ticker:'SNDK', name:'Sandisk Corporation', sector:'Technology', weight:0.88, price:2245.16, marketCap:333960, revenue:13180, inFullDetail:false},
+  {ticker:'KLAC', name:'KLA Corporation', sector:'Technology', weight:0.86, price:249.62, marketCap:326370, revenue:13100, inFullDetail:false},
+  {ticker:'NFLX', name:'Netflix, Inc.', sector:'Communication Services', weight:0.83, price:74.50, marketCap:314985, revenue:46890, inFullDetail:false},
+  {ticker:'TXN', name:'Texas Instruments Incorporated', sector:'Technology', weight:0.73, price:303.42, marketCap:277035, revenue:18440, inFullDetail:false},
+  {ticker:'PLTR', name:'Palantir Technologies Inc.', sector:'Technology', weight:0.70, price:111.54, marketCap:265650, revenue:5220, inFullDetail:false},
+  {ticker:'PANW', name:'Palo Alto Networks, Inc.', sector:'Technology', weight:0.64, price:297.42, marketCap:242880, revenue:9890, inFullDetail:false},
+  {ticker:'LIN', name:'Linde plc', sector:'Materials', weight:0.64, price:521.75, marketCap:242880, revenue:34660, inFullDetail:false},
+  {ticker:'MRVL', name:'Marvell Technology, Inc.', sector:'Technology', weight:0.63, price:272.62, marketCap:239085, revenue:8720, inFullDetail:false},
+  {ticker:'STX', name:'Seagate Technology Holdings plc', sector:'Technology', weight:0.58, price:978.60, marketCap:220110, revenue:11010, inFullDetail:false},
+  {ticker:'QCOM', name:'QUALCOMM Incorporated', sector:'Technology', weight:0.57, price:206.85, marketCap:216315, revenue:44490, inFullDetail:false},
+  {ticker:'WDC', name:'Western Digital Corporation', sector:'Technology', weight:0.57, price:625.91, marketCap:216315, revenue:11780, inFullDetail:false},
+  {ticker:'TMUS', name:'T-Mobile US, Inc.', sector:'Communication Services', weight:0.52, price:182.06, marketCap:197340, revenue:90530, inFullDetail:false},
+  {ticker:'AMGN', name:'Amgen Inc.', sector:'Health Care', weight:0.51, price:360.90, marketCap:193545, revenue:37220, inFullDetail:false},
+  {ticker:'PEP', name:'PepsiCo, Inc.', sector:'Consumer Staples', weight:0.51, price:141.21, marketCap:193545, revenue:95450, inFullDetail:false},
+  {ticker:'ADI', name:'Analog Devices, Inc.', sector:'Technology', weight:0.51, price:395.13, marketCap:193545, revenue:12740, inFullDetail:false},
+  {ticker:'CRWD', name:'CrowdStrike Holdings, Inc.', sector:'Technology', weight:0.47, price:693.87, marketCap:178365, revenue:4810, inFullDetail:false},
+  {ticker:'GILD', name:'Gilead Sciences, Inc.', sector:'Health Care', weight:0.42, price:127.36, marketCap:159390, revenue:29740, inFullDetail:false},
+  {ticker:'APP', name:'AppLovin Corporation', sector:'Communication Services', weight:0.41, price:464.73, marketCap:155595, revenue:6160, inFullDetail:false},
+  {ticker:'SHOP', name:'Shopify Inc.', sector:'Technology', weight:0.39, price:114.47, marketCap:148005, revenue:12370, inFullDetail:false},
+  {ticker:'HON', name:'Honeywell International Inc.', sector:'Industrials', weight:0.39, price:232.79, marketCap:148005, revenue:37660, inFullDetail:false},
+  {ticker:'ISRG', name:'Intuitive Surgical, Inc.', sector:'Health Care', weight:0.38, price:407.76, marketCap:144210, revenue:10580, inFullDetail:false},
+  {ticker:'BKNG', name:'Booking Holdings Inc.', sector:'Consumer Discretionary', weight:0.37, price:178.77, marketCap:140415, revenue:27690, inFullDetail:false},
+  {ticker:'VRTX', name:'Vertex Pharmaceuticals Incorporated', sector:'Health Care', weight:0.33, price:496.78, marketCap:125235, revenue:12220, inFullDetail:false},
+  {ticker:'SBUX', name:'Starbucks Corporation', sector:'Consumer Discretionary', weight:0.31, price:103.92, marketCap:117645, revenue:38470, inFullDetail:false},
+  {ticker:'FTNT', name:'Fortinet, Inc.', sector:'Technology', weight:0.29, price:151.09, marketCap:110055, revenue:7110, inFullDetail:false},
+  {ticker:'PDD', name:'PDD Holdings Inc.', sector:'Consumer Discretionary', weight:0.28, price:74.80, marketCap:106260, revenue:64140, inFullDetail:false},
+  {ticker:'CDNS', name:'Cadence Design Systems, Inc.', sector:'Technology', weight:0.27, price:365.16, marketCap:102465, revenue:5530, inFullDetail:false},
+  {ticker:'MAR', name:'Marriott International, Inc.', sector:'Consumer Discretionary', weight:0.26, price:375.39, marketCap:98670, revenue:7180, inFullDetail:false},
+  {ticker:'MNST', name:'Monster Beverage Corporation', sector:'Consumer Staples', weight:0.25, price:97.02, marketCap:94875, revenue:8790, inFullDetail:false},
+  {ticker:'CEG', name:'Constellation Energy Corporation', sector:'Utilities', weight:0.25, price:264.44, marketCap:94875, revenue:29870, inFullDetail:false},
+  {ticker:'CSX', name:'CSX Corporation', sector:'Industrials', weight:0.23, price:47.54, marketCap:87285, revenue:14150, inFullDetail:false},
+  {ticker:'ADP', name:'Automatic Data Processing, Inc.', sector:'Industrials', weight:0.23, price:218.93, marketCap:87285, revenue:21600, inFullDetail:false},
+  {ticker:'ABNB', name:'Airbnb, Inc.', sector:'Consumer Discretionary', weight:0.22, price:143.18, marketCap:83490, revenue:12650, inFullDetail:false},
+  {ticker:'SNPS', name:'Synopsys, Inc.', sector:'Technology', weight:0.22, price:441.49, marketCap:83490, revenue:8680, inFullDetail:false},
+  {ticker:'MELI', name:'MercadoLibre, Inc.', sector:'Consumer Discretionary', weight:0.22, price:1638.72, marketCap:83490, revenue:31800, inFullDetail:false},
+  {ticker:'DDOG', name:'Datadog, Inc.', sector:'Technology', weight:0.22, price:230.32, marketCap:83490, revenue:3670, inFullDetail:false},
+  {ticker:'CMCSA', name:'Comcast Corporation', sector:'Communication Services', weight:0.21, price:22.79, marketCap:79695, revenue:125280, inFullDetail:false},
+  {ticker:'ADBE', name:'Adobe Inc.', sector:'Technology', weight:0.21, price:199.06, marketCap:79695, revenue:24450, inFullDetail:false},
+  {ticker:'MDLZ', name:'Mondelez International, Inc.', sector:'Consumer Staples', weight:0.21, price:61.23, marketCap:79695, revenue:39300, inFullDetail:false},
+  {ticker:'DASH', name:'DoorDash, Inc.', sector:'Consumer Discretionary', weight:0.20, price:177.75, marketCap:75900, revenue:14720, inFullDetail:false},
+  {ticker:'AEP', name:'American Electric Power Company, Inc.', sector:'Utilities', weight:0.20, price:138.10, marketCap:75900, revenue:22430, inFullDetail:false},
+  {ticker:'ORLY', name:"O'Reilly Automotive, Inc.", sector:'Consumer Discretionary', weight:0.19, price:89.21, marketCap:72105, revenue:18210, inFullDetail:false},
+  {ticker:'INTU', name:'Intuit Inc.', sector:'Technology', weight:0.19, price:264.70, marketCap:72105, revenue:20930, inFullDetail:false},
+  {ticker:'NXPI', name:'NXP Semiconductors N.V.', sector:'Technology', weight:0.19, price:286.72, marketCap:72105, revenue:12620, inFullDetail:false},
+  {ticker:'ROST', name:'Ross Stores, Inc.', sector:'Consumer Discretionary', weight:0.18, price:214.93, marketCap:68310, revenue:23780, inFullDetail:false},
+  {ticker:'TER', name:'Teradyne, Inc.', sector:'Technology', weight:0.18, price:439.30, marketCap:68310, revenue:3790, inFullDetail:false},
+  {ticker:'CTAS', name:'Cintas Corporation', sector:'Industrials', weight:0.18, price:171.82, marketCap:68310, revenue:11030, inFullDetail:false},
+  {ticker:'WBD', name:'Warner Bros. Discovery, Inc.', sector:'Communication Services', weight:0.18, price:26.96, marketCap:68310, revenue:37210, inFullDetail:false},
+  {ticker:'REGN', name:'Regeneron Pharmaceuticals, Inc.', sector:'Health Care', weight:0.18, price:634.98, marketCap:68310, revenue:14920, inFullDetail:false},
+  {ticker:'ALAB', name:'Astera Labs, Inc.', sector:'Technology', weight:0.17, price:385.48, marketCap:64515, revenue:1000, inFullDetail:false},
+  {ticker:'MPWR', name:'Monolithic Power Systems, Inc.', sector:'Technology', weight:0.17, price:1330.67, marketCap:64515, revenue:2960, inFullDetail:false},
+  {ticker:'PCAR', name:'PACCAR Inc', sector:'Industrials', weight:0.17, price:120.53, marketCap:64515, revenue:27780, inFullDetail:false},
+  {ticker:'LITE', name:'Lumentum Holdings Inc.', sector:'Technology', weight:0.16, price:801.47, marketCap:60720, revenue:2490, inFullDetail:false},
+  {ticker:'NBIS', name:'Nebius Group N.V.', sector:'Communication Services', weight:0.16, price:245.24, marketCap:60720, revenue:878, inFullDetail:false},
+  {ticker:'BKR', name:'Baker Hughes Company', sector:'Energy', weight:0.15, price:56.39, marketCap:56925, revenue:27890, inFullDetail:false},
+  {ticker:'FAST', name:'Fastenal Company', sector:'Industrials', weight:0.14, price:47.36, marketCap:53130, revenue:8440, inFullDetail:false},
+  {ticker:'RKLB', name:'Rocket Lab USA, Inc.', sector:'Industrials', weight:0.14, price:85.26, marketCap:53130, revenue:680, inFullDetail:false},
+  {ticker:'CRWV', name:'CoreWeave, Inc.', sector:'Technology', weight:0.14, price:95.18, marketCap:53130, revenue:6230, inFullDetail:false},
+  {ticker:'XEL', name:'Xcel Energy Inc.', sector:'Utilities', weight:0.14, price:82.58, marketCap:53130, revenue:14780, inFullDetail:false},
+  {ticker:'EA', name:'Electronic Arts Inc.', sector:'Communication Services', weight:0.14, price:205.10, marketCap:53130, revenue:7530, inFullDetail:false},
+  {ticker:'FANG', name:'Diamondback Energy, Inc.', sector:'Energy', weight:0.14, price:182.41, marketCap:53130, revenue:14460, inFullDetail:false},
+  {ticker:'FER', name:'Ferrovial SE', sector:'Industrials', weight:0.13, price:69.59, marketCap:49335, revenue:11300, inFullDetail:false},
+  {ticker:'MCHP', name:'Microchip Technology Incorporated', sector:'Technology', weight:0.13, price:89.97, marketCap:49335, revenue:4710, inFullDetail:false},
+  {ticker:'EXC', name:'Exelon Corporation', sector:'Utilities', weight:0.13, price:47.22, marketCap:49335, revenue:24790, inFullDetail:false},
+  {ticker:'ODFL', name:'Old Dominion Freight Line, Inc.', sector:'Industrials', weight:0.12, price:219.89, marketCap:45540, revenue:5460, inFullDetail:false},
+  {ticker:'KDP', name:'Keurig Dr Pepper Inc.', sector:'Consumer Staples', weight:0.12, price:33.24, marketCap:45540, revenue:16940, inFullDetail:false},
+  {ticker:'CCEP', name:'Coca-Cola Europacific Partners plc', sector:'Consumer Staples', weight:0.12, price:100.22, marketCap:45540, revenue:24540, inFullDetail:false},
+  {ticker:'IDXX', name:'IDEXX Laboratories, Inc.', sector:'Health Care', weight:0.12, price:558.05, marketCap:45540, revenue:4450, inFullDetail:false},
+  {ticker:'TTWO', name:'Take-Two Interactive Software, Inc.', sector:'Communication Services', weight:0.12, price:235.14, marketCap:45540, revenue:6660, inFullDetail:false},
+  {ticker:'ADSK', name:'Autodesk, Inc.', sector:'Technology', weight:0.11, price:194.68, marketCap:41745, revenue:7510, inFullDetail:false},
+  {ticker:'ALNY', name:'Alnylam Pharmaceuticals, Inc.', sector:'Health Care', weight:0.11, price:300.62, marketCap:41745, revenue:4290, inFullDetail:false},
+  {ticker:'PYPL', name:'PayPal Holdings, Inc.', sector:'Financials', weight:0.10, price:43.61, marketCap:37950, revenue:33730, inFullDetail:false},
+  {ticker:'AXON', name:'Axon Enterprise, Inc.', sector:'Industrials', weight:0.10, price:456.84, marketCap:37950, revenue:2980, inFullDetail:false},
+  {ticker:'TRI', name:'Thomson Reuters Corporation', sector:'Industrials', weight:0.10, price:83.38, marketCap:37950, revenue:7660, inFullDetail:false},
+  {ticker:'PAYX', name:'Paychex, Inc.', sector:'Industrials', weight:0.09, price:97.89, marketCap:34155, revenue:6330, inFullDetail:false},
+  {ticker:'ROP', name:'Roper Technologies, Inc.', sector:'Industrials', weight:0.09, price:338.57, marketCap:34155, revenue:8120, inFullDetail:false},
+  {ticker:'MSTR', name:'Strategy (MicroStrategy Incorporated)', sector:'Technology', weight:0.08, price:85.93, marketCap:30360, revenue:490, inFullDetail:false},
+  {ticker:'GEHC', name:'GE HealthCare Technologies Inc.', sector:'Health Care', weight:0.08, price:65.90, marketCap:30360, revenue:20980, inFullDetail:false},
+  {ticker:'WDAY', name:'Workday, Inc.', sector:'Technology', weight:0.08, price:118.87, marketCap:30360, revenue:9850, inFullDetail:false},
+  {ticker:'KHC', name:'The Kraft Heinz Company', sector:'Consumer Staples', weight:0.07, price:23.80, marketCap:26565, revenue:24990, inFullDetail:false},
+  {ticker:'CPRT', name:'Copart, Inc.', sector:'Industrials', weight:0.07, price:30.42, marketCap:26565, revenue:4640, inFullDetail:false},
+  {ticker:'DXCM', name:'DexCom, Inc.', sector:'Health Care', weight:0.07, price:69.06, marketCap:26565, revenue:4820, inFullDetail:false}
+];
+const NASDAQ100_SECTORS = [...new Set(NASDAQ100_SNAPSHOT.map(r=>r.sector))].sort();
+
+/* ======================================================================
+   2. HELPERS
+   ====================================================================== */
+const COLORS = ['#2563eb','#16a34a','#d97706','#dc2626','#7c3aed','#0891b2'];
+
+function fmtB(m){ // millions -> $ billions string
+  if (m === undefined || m === null || isNaN(m)) return '--';
+  return '$' + (m/1000).toFixed(1) + 'B';
+}
+function fmtM(m){
+  if (m === undefined || m === null || isNaN(m)) return '--';
+  return '$' + Number(m).toLocaleString(undefined,{maximumFractionDigits:0}) + 'M';
+}
+function fmtPct(v, decimals=1){
+  if (v === undefined || v === null || isNaN(v)) return '--';
+  return v.toFixed(decimals) + '%';
+}
+function fmtX(v, decimals=2){
+  if (v === undefined || v === null || isNaN(v)) return '--';
+  return v.toFixed(decimals) + 'x';
+}
+function fmtUSD(v, decimals=2){
+  if (v === undefined || v === null || isNaN(v)) return '--';
+  return '$' + v.toFixed(decimals);
+}
+function getPath(obj, path){
+  return path.split('.').reduce((o,k)=> (o ? o[k] : undefined), obj);
+}
+function last(arr){ return arr[arr.length-1]; }
+function prev(arr){ return arr[arr.length-2]; }
+function pctChange(curr, prior){
+  if (!prior) return null;
+  return ((curr-prior)/Math.abs(prior))*100;
+}
+
+let currentTicker = 'AAPL';
+let dcfState = {};
+let charts = {};
+
+/* ======================================================================
+   3. COMPANY SELECTOR + HEADER
+   ====================================================================== */
+function initSelector(){
+  const sel = document.getElementById('company-select');
+  Object.keys(COMPANIES).forEach(t=>{
+    const opt = document.createElement('option');
+    opt.value = t;
+    opt.textContent = t + ' — ' + COMPANIES[t].meta.name;
+    sel.appendChild(opt);
+  });
+  sel.value = currentTicker;
+  sel.addEventListener('change', e=>{
+    currentTicker = e.target.value;
+    render();
+  });
+}
+
+function renderHeader(c){
+  document.getElementById('company-title').textContent = c.meta.name + ' (' + c.meta.ticker + ') — Fundamental Analysis';
+  document.getElementById('price-val').textContent = fmtUSD(c.meta.price);
+  document.getElementById('price-meta').textContent = c.meta.priceDate + ' · Mkt Cap ' + fmtB(c.meta.marketCap);
+  document.getElementById('footer-date').textContent = c.meta.priceDate;
+}
+
+/* ======================================================================
+   4. KPI CARDS
+   ====================================================================== */
+function renderKPIs(c){
+  const rev = last(c.income.revenue), revPrior = prev(c.income.revenue);
+  const ni = last(c.income.netIncome), niPrior = prev(c.income.netIncome);
+  const fcf = last(c.cashFlow.freeCashFlow), fcfPrior = prev(c.cashFlow.freeCashFlow);
+  const gm = last(c.margins.gross), gmPrior = prev(c.margins.gross);
+  const om = last(c.margins.operating);
+  const roe = last(c.returns.roe);
+  const roic = last(c.returns.roic);
+  const curRatio = last(c.liquiditySolvency.currentRatio);
+  const de = last(c.liquiditySolvency.debtToEquity);
+  const pe = last(c.valuation.pe);
+
+  const cards = [
+    {label:'Revenue (TTM)', value: fmtB(rev), sub: chgLabel(pctChange(rev,revPrior))},
+    {label:'Net Income (TTM)', value: fmtB(ni), sub: chgLabel(pctChange(ni,niPrior))},
+    {label:'Free Cash Flow (TTM)', value: fmtB(fcf), sub: chgLabel(pctChange(fcf,fcfPrior))},
+    {label:'Gross Margin', value: fmtPct(gm), sub: chgLabel(gm-gmPrior, true)+' pts YoY'},
+    {label:'Operating Margin', value: fmtPct(om), sub: 'Net margin ' + fmtPct(last(c.margins.net))},
+    {label:'Return on Equity', value: fmtPct(roe,1), sub: 'ROIC ' + fmtPct(roic,1)},
+    {label:'Current Ratio', value: fmtX(curRatio), sub: 'Quick ratio ' + fmtX(last(c.liquiditySolvency.quickRatio))},
+    {label:'Debt / Equity', value: fmtX(de), sub: 'Net debt/equity ' + fmtX(last(c.liquiditySolvency.netDebtToEquity))},
+    {label:'P/E Ratio', value: fmtX(pe), sub: 'Forward P/E ' + fmtX(c.valuation.forwardPE)},
+    {label:'Market Cap', value: fmtB(c.meta.marketCap), sub: 'Div. yield ' + fmtPct(c.valuation.dividendYield)}
+  ];
+  const row = document.getElementById('kpi-row');
+  row.innerHTML = cards.map(card=>`
+    <div class="kpi-card">
+      <div class="kpi-label">${card.label}</div>
+      <div class="kpi-value">${card.value}</div>
+      <div class="kpi-sub">${card.sub}</div>
+    </div>`).join('');
+}
+function chgLabel(pct, isPts){
+  if (pct === null || isNaN(pct)) return '--';
+  const sign = pct >= 0 ? '+' : '';
+  const cls = pct >= 0 ? 'positive' : 'negative';
+  return `<span class="kpi-sub ${cls}">${sign}${pct.toFixed(1)}${isPts?'':'%'} YoY</span>`;
+}
+
+/* ======================================================================
+   5. CHARTS
+   ====================================================================== */
+function destroyChart(key){ if (charts[key]) { charts[key].destroy(); delete charts[key]; } }
+
+function renderIncomeChart(c){
+  destroyChart('income');
+  const ctx = document.getElementById('chart-income').getContext('2d');
+  charts.income = new Chart(ctx, {
+    type:'bar',
+    data:{
+      labels: c.years,
+      datasets:[
+        {label:'Revenue', data: c.income.revenue.map(v=>v/1000), backgroundColor: COLORS[0]+'CC', borderRadius:4},
+        {label:'Operating Income', data: c.income.operatingIncome.map(v=>v/1000), backgroundColor: COLORS[2]+'CC', borderRadius:4},
+        {label:'Net Income', data: c.income.netIncome.map(v=>v/1000), backgroundColor: COLORS[1]+'CC', borderRadius:4}
+      ]
+    },
+    options: baseBarOptions('$ billions')
+  });
+}
+
+function renderMarginsChart(c){
+  destroyChart('margins');
+  const ctx = document.getElementById('chart-margins').getContext('2d');
+  charts.margins = new Chart(ctx, {
+    type:'line',
+    data:{
+      labels: c.years,
+      datasets:[
+        lineDS('Gross Margin', c.margins.gross, COLORS[0]),
+        lineDS('Operating Margin', c.margins.operating, COLORS[2]),
+        lineDS('Net Margin', c.margins.net, COLORS[3])
+      ]
+    },
+    options: baseLineOptions('%')
+  });
+}
+
+function renderCashflowChart(c){
+  destroyChart('cashflow');
+  const ctx = document.getElementById('chart-cashflow').getContext('2d');
+  charts.cashflow = new Chart(ctx, {
+    type:'bar',
+    data:{
+      labels: c.years,
+      datasets:[
+        {label:'Operating Cash Flow', data:c.cashFlow.operatingCashFlow.map(v=>v/1000), backgroundColor: COLORS[0]+'CC', borderRadius:4},
+        {label:'CapEx', data:c.cashFlow.capex.map(v=> -v/1000), backgroundColor: COLORS[3]+'CC', borderRadius:4},
+        {label:'Free Cash Flow', data:c.cashFlow.freeCashFlow.map(v=>v/1000), backgroundColor: COLORS[1]+'CC', borderRadius:4}
+      ]
+    },
+    options: baseBarOptions('$ billions')
+  });
+}
+
+function renderLeverageChart(c){
+  destroyChart('leverage');
+  const ctx = document.getElementById('chart-leverage').getContext('2d');
+  charts.leverage = new Chart(ctx, {
+    data:{
+      labels: c.years,
+      datasets:[
+        {type:'bar', label:'Debt / Equity', data:c.liquiditySolvency.debtToEquity, backgroundColor:COLORS[4]+'AA', borderRadius:4, yAxisID:'y'},
+        {type:'line', label:'Current Ratio', data:c.liquiditySolvency.currentRatio, borderColor:COLORS[0], backgroundColor:COLORS[0], tension:0.3, yAxisID:'y1', pointRadius:3}
+      ]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      interaction:{mode:'index', intersect:false},
+      plugins:{legend:{position:'top', labels:{usePointStyle:true, padding:14, font:{size:11}}}},
+      scales:{
+        y:{position:'left', beginAtZero:true, title:{display:true,text:'Debt/Equity (x)',font:{size:10.5}}, grid:{display:false}},
+        y1:{position:'right', beginAtZero:true, title:{display:true,text:'Current Ratio (x)',font:{size:10.5}}, grid:{display:false}},
+        x:{grid:{display:false}}
+      }
+    }
+  });
+}
+
+function lineDS(label, data, color){
+  return {label, data, borderColor:color, backgroundColor:color+'20', borderWidth:2, fill:false, tension:0.3, pointRadius:3, pointHoverRadius:6};
+}
+function baseBarOptions(axisLabel){
+  return {
+    responsive:true, maintainAspectRatio:false,
+    interaction:{mode:'index', intersect:false},
+    plugins:{legend:{position:'top', labels:{usePointStyle:true, padding:14, font:{size:11}}}},
+    scales:{
+      x:{grid:{display:false}},
+      y:{beginAtZero:true, title:{display:true,text:axisLabel,font:{size:10.5}}, grid:{color:'#f0f1f3'}}
+    }
+  };
+}
+function baseLineOptions(axisLabel){
+  return {
+    responsive:true, maintainAspectRatio:false,
+    interaction:{mode:'index', intersect:false},
+    plugins:{legend:{position:'top', labels:{usePointStyle:true, padding:14, font:{size:11}}}},
+    scales:{
+      x:{grid:{display:false}},
+      y:{title:{display:true,text:axisLabel,font:{size:10.5}}, grid:{color:'#f0f1f3'}}
+    }
+  };
+}
+
+/* ======================================================================
+   6. RATIO TABLE
+   ====================================================================== */
+function renderRatioTable(c){
+  const groups = [...new Set(RATIO_DEFS.map(r=>r.group))];
+  let html = '<thead><tr><th>Metric</th>' + c.years.map(y=>`<th>${y}</th>`).join('') + '</tr></thead><tbody>';
+  groups.forEach(g=>{
+    html += `<tr class="group-row"><td colspan="${c.years.length+1}">${g}</td></tr>`;
+    RATIO_DEFS.filter(r=>r.group===g).forEach(r=>{
+      const arr = getPath(c, r.source);
+      const vals = Array.isArray(arr) ? arr : c.years.map(()=>arr);
+      html += `<tr><td class="row-label">${r.label}</td>` +
+        vals.map(v=> `<td>${ r.fmt==='pct' ? fmtPct(v) : fmtX(v) }</td>`).join('') + '</tr>';
+    });
+  });
+  html += '</tbody>';
+  document.getElementById('ratio-table').innerHTML = html;
+}
+
+/* ======================================================================
+   7. PEER COMPARISON
+   ====================================================================== */
+function toPeerRow(t){
+  const co = COMPANIES[t];
+  return {
+    ticker: t, name: co.meta.name,
+    pe: last(co.valuation.pe), forwardPE: co.valuation.forwardPE, peg: co.valuation.peg,
+    ps: last(co.valuation.ps), evEbitda: last(co.valuation.evEbitda),
+    roe: last(co.returns.roe), roa: last(co.returns.roa), roic: last(co.returns.roic),
+    divYield: co.valuation.dividendYield, marketCap: co.meta.marketCap
+  };
+}
+function getPeers(ticker){
+  const self = COMPANIES[ticker];
+  if(!self) return [];
+  const others = Object.keys(COMPANIES).filter(t=>t!==ticker);
+  const sameIndustry = others.filter(t=>COMPANIES[t].meta.industry===self.meta.industry);
+  const sameSector = others.filter(t=>COMPANIES[t].meta.sector===self.meta.sector && !sameIndustry.includes(t));
+  let pool = sameIndustry.concat(sameSector);
+  if(pool.length < 5){
+    const rest = others.filter(t=>!pool.includes(t));
+    pool = pool.concat(rest);
+  }
+  const peerTickers = [ticker, ...pool.slice(0,5)];
+  return peerTickers.map(toPeerRow);
+}
+function renderPeers(c){
+  const peerList = getPeers(currentTicker);
+  destroyChart('peersVal');
+  destroyChart('peersRet');
+
+  const ctxV = document.getElementById('chart-peers-valuation').getContext('2d');
+  charts.peersVal = new Chart(ctxV, {
+    type:'bar',
+    data:{
+      labels: peerList.map(p=>p.ticker),
+      datasets:[
+        {label:'P/E', data:peerList.map(p=>p.pe), backgroundColor:COLORS[0]+'CC', borderRadius:4},
+        {label:'EV/EBITDA', data:peerList.map(p=>p.evEbitda), backgroundColor:COLORS[2]+'CC', borderRadius:4}
+      ]
+    },
+    options: baseBarOptions('multiple (x)')
+  });
+
+  const ctxR = document.getElementById('chart-peers-returns').getContext('2d');
+  charts.peersRet = new Chart(ctxR, {
+    type:'bar',
+    data:{
+      labels: peerList.map(p=>p.ticker),
+      datasets:[
+        {label:'ROE', data:peerList.map(p=>p.roe), backgroundColor:COLORS[1]+'CC', borderRadius:4},
+        {label:'ROA', data:peerList.map(p=>p.roa), backgroundColor:COLORS[4]+'CC', borderRadius:4},
+        {label:'ROIC', data:peerList.map(p=>p.roic), backgroundColor:COLORS[3]+'CC', borderRadius:4}
+      ]
+    },
+    options: baseBarOptions('%')
+  });
+
+  let html = '<thead><tr><th>Company</th><th>P/E</th><th>Fwd P/E</th><th>PEG</th><th>P/S</th><th>EV/EBITDA</th><th>ROE</th><th>ROA</th><th>ROIC</th><th>Div Yield</th><th>Market Cap</th></tr></thead><tbody>';
+  peerList.forEach(p=>{
+    html += `<tr><td class="row-label">${p.ticker} <span class="row-sub">${p.name}</span></td>
+      <td>${fmtX(p.pe)}</td><td>${fmtX(p.forwardPE)}</td><td>${fmtX(p.peg)}</td><td>${fmtX(p.ps)}</td>
+      <td>${fmtX(p.evEbitda)}</td><td>${fmtPct(p.roe)}</td><td>${fmtPct(p.roa)}</td><td>${fmtPct(p.roic)}</td>
+      <td>${fmtPct(p.divYield)}</td><td>${fmtB(p.marketCap)}</td></tr>`;
+  });
+  html += '</tbody>';
+  document.getElementById('peer-table').innerHTML = html;
+}
+
+/* ======================================================================
+   7b. NASDAQ-100 SCREENER
+   ====================================================================== */
+function populateScreenerFilter(){
+  const sel = document.getElementById('screener-sector');
+  NASDAQ100_SECTORS.forEach(s=>{
+    const opt = document.createElement('option');
+    opt.value = s; opt.textContent = s;
+    sel.appendChild(opt);
+  });
+}
+
+function renderScreenerTable(){
+  const term = (document.getElementById('screener-search').value || '').trim().toLowerCase();
+  const sector = document.getElementById('screener-sector').value;
+  let rows = NASDAQ100_SNAPSHOT.filter(r=>{
+    const matchesTerm = !term || r.ticker.toLowerCase().includes(term) || r.name.toLowerCase().includes(term);
+    const matchesSector = !sector || r.sector === sector;
+    return matchesTerm && matchesSector;
+  });
+
+  document.getElementById('screener-count').textContent = rows.length + ' of ' + NASDAQ100_SNAPSHOT.length + ' constituents';
+
+  let html = '<thead><tr><th>Rank</th><th>Company</th><th>Sector</th><th>Weight</th><th>Price</th><th>Market Cap</th><th>Revenue (TTM)</th><th>P/S</th><th>Detail</th></tr></thead><tbody>';
+  rows.forEach((r,i)=>{
+    const rank = NASDAQ100_SNAPSHOT.indexOf(r) + 1;
+    // For the 15 fully-modeled tickers, pull price/marketCap/revenue straight from
+    // COMPANIES so the screener can never drift out of sync with the detail view above.
+    const co = r.inFullDetail ? COMPANIES[r.ticker] : null;
+    const price = co ? co.meta.price : r.price;
+    const marketCap = co ? co.meta.marketCap : r.marketCap;
+    const revenue = co ? last(co.income.revenue) : r.revenue;
+    const ps = marketCap / revenue;
+    html += `<tr>
+      <td>${rank}</td>
+      <td class="row-label">${r.ticker} <span class="row-sub">${r.name}</span></td>
+      <td><span class="sector-badge">${r.sector}</span></td>
+      <td>${fmtPct(r.weight,2)}</td>
+      <td>${fmtUSD(price)}</td>
+      <td>${fmtB(marketCap)}</td>
+      <td>${fmtB(revenue)}</td>
+      <td>${fmtX(ps)}</td>
+      <td>${r.inFullDetail ? `<span class="detail-badge" data-ticker="${r.ticker}">Full detail</span>` : '<span class="row-sub">Screener only</span>'}</td>
+    </tr>`;
+  });
+  html += '</tbody>';
+  document.getElementById('screener-table').innerHTML = html;
+
+  document.querySelectorAll('#screener-table .detail-badge[data-ticker]').forEach(badge=>{
+    badge.addEventListener('click', ()=>{
+      const t = badge.dataset.ticker;
+      currentTicker = t;
+      document.getElementById('company-select').value = t;
+      render();
+      document.getElementById('company-title').scrollIntoView({behavior:'smooth', block:'start'});
+    });
+  });
+}
+
+function bindScreenerControls(){
+  document.getElementById('screener-search').addEventListener('input', renderScreenerTable);
+  document.getElementById('screener-sector').addEventListener('change', renderScreenerTable);
+}
+
+/* ======================================================================
+   8. DCF MODEL
+   ====================================================================== */
+function calcDCF(inputs){
+  const {fcf0, g1, gt, wacc, shares} = inputs;
+  const r = wacc/100;
+  const years = [];
+  let fcfPrev = fcf0;
+  for (let n=1; n<=10; n++){
+    let g;
+    if (n <= 5){
+      g = g1; // stage 1
+    } else {
+      // linear fade from g1 (at n=5) to gt (at n=10)
+      const step = (g1 - gt) / 5;
+      g = g1 - step * (n - 5);
+    }
+    const fcf = fcfPrev * (1 + g/100);
+    const df = 1 / Math.pow(1+r, n);
+    const pv = fcf * df;
+    years.push({n, growth:g, fcf, df, pv});
+    fcfPrev = fcf;
+  }
+  const terminalFCF = years[9].fcf;
+  const terminalValue = terminalFCF * (1 + gt/100) / (r - gt/100);
+  const pvTerminal = terminalValue * years[9].df;
+  const sumPVStage1 = years.slice(0,5).reduce((s,y)=>s+y.pv,0);
+  const sumPVStage2 = years.slice(5,10).reduce((s,y)=>s+y.pv,0);
+  const equityValue = sumPVStage1 + sumPVStage2 + pvTerminal;
+  const valuePerShare = equityValue / shares;
+  return {years, terminalValue, pvTerminal, sumPVStage1, sumPVStage2, equityValue, valuePerShare};
+}
+
+function sensitivityGrid(inputs){
+  const waccRange = [inputs.wacc-2, inputs.wacc-1, inputs.wacc, inputs.wacc+1, inputs.wacc+2];
+  const gtRange = [inputs.gt-1, inputs.gt-0.5, inputs.gt, inputs.gt+0.5, inputs.gt+1].map(v=>Math.max(v,0));
+  const grid = waccRange.map(w=>{
+    return gtRange.map(g=>{
+      if (w <= g) return null; // invalid: discount rate must exceed terminal growth
+      const res = calcDCF({...inputs, wacc:w, gt:g});
+      return res.valuePerShare;
+    });
+  });
+  return {waccRange, gtRange, grid};
+}
+
+function renderDCF(c){
+  const d = c.dcfDefaults;
+  document.getElementById('in-fcf0').value = d.fcf0;
+  document.getElementById('in-g1').value = d.g1;
+  document.getElementById('in-gt').value = d.gt;
+  document.getElementById('in-wacc').value = d.wacc;
+  document.getElementById('in-shares').value = d.shares;
+  document.getElementById('dcf-price').textContent = fmtUSD(c.meta.price);
+  document.getElementById('dcf-price-date').textContent = c.meta.priceDate;
+  updateDCF(c);
+}
+
+function readDCFInputs(){
+  return {
+    fcf0: parseFloat(document.getElementById('in-fcf0').value) || 0,
+    g1: parseFloat(document.getElementById('in-g1').value),
+    gt: parseFloat(document.getElementById('in-gt').value),
+    wacc: parseFloat(document.getElementById('in-wacc').value),
+    shares: parseFloat(document.getElementById('in-shares').value) || 1
+  };
+}
+
+function updateDCF(c){
+  const inputs = readDCFInputs();
+  document.getElementById('lbl-fcf0').textContent = fmtM(inputs.fcf0);
+  document.getElementById('lbl-g1').textContent = inputs.g1.toFixed(1) + '%';
+  document.getElementById('lbl-gt').textContent = inputs.gt.toFixed(2) + '%';
+  document.getElementById('lbl-wacc').textContent = inputs.wacc.toFixed(2) + '%';
+  document.getElementById('lbl-shares').textContent = inputs.shares.toLocaleString() + 'M';
+
+  if (inputs.wacc <= inputs.gt){
+    document.getElementById('dcf-value').textContent = 'n/a';
+    document.getElementById('dcf-updown').textContent = 'Discount rate must exceed terminal growth';
+    return;
+  }
+
+  const result = calcDCF(inputs);
+  const price = c.meta.price;
+  const updown = ((result.valuePerShare - price) / price) * 100;
+
+  document.getElementById('dcf-value').textContent = fmtUSD(result.valuePerShare);
+  const updownEl = document.getElementById('dcf-updown');
+  updownEl.textContent = (updown>=0?'+':'') + updown.toFixed(1) + '%';
+  updownEl.style.color = updown >= 0 ? 'var(--positive)' : 'var(--negative)';
+
+  // PV bridge chart
+  destroyChart('dcfBridge');
+  const ctx = document.getElementById('chart-dcf-bridge').getContext('2d');
+  charts.dcfBridge = new Chart(ctx, {
+    type:'bar',
+    data:{
+      labels:['Present Value of Intrinsic Estimate'],
+      datasets:[
+        {label:'Stage 1 PV (Yrs 1-5)', data:[result.sumPVStage1/1000], backgroundColor: COLORS[0]+'CC', borderRadius:4},
+        {label:'Stage 2 PV (Yrs 6-10)', data:[result.sumPVStage2/1000], backgroundColor: COLORS[2]+'CC', borderRadius:4},
+        {label:'Terminal Value PV', data:[result.pvTerminal/1000], backgroundColor: COLORS[4]+'CC', borderRadius:4}
+      ]
+    },
+    options:{
+      indexAxis:'y', responsive:true, maintainAspectRatio:false,
+      plugins:{legend:{position:'bottom', labels:{usePointStyle:true, font:{size:11}}}},
+      scales:{
+        x:{stacked:true, beginAtZero:true, title:{display:true,text:'$ billions',font:{size:10.5}}, grid:{color:'#f0f1f3'}},
+        y:{stacked:true, grid:{display:false}}
+      }
+    }
+  });
+
+  // Sensitivity table
+  const sens = sensitivityGrid(inputs);
+  let html = '<thead><tr><th>WACC \\ Terminal g</th>' + sens.gtRange.map(g=>`<th>${g.toFixed(2)}%</th>`).join('') + '</tr></thead><tbody>';
+  sens.waccRange.forEach((w,ri)=>{
+    html += `<tr><td class="row-label">${w.toFixed(2)}%</td>` + sens.grid[ri].map((v,ci)=>{
+      if (v===null) return '<td>--</td>';
+      const diff = ((v-price)/price)*100;
+      const cls = diff > 10 ? 'positive' : diff < -10 ? 'negative' : 'neutral';
+      const isHit = Math.abs(w-inputs.wacc)<0.01 && Math.abs(sens.gtRange[ci]-inputs.gt)<0.01;
+      return `<td class="${isHit?'hit':''}"><span class="pill ${cls}">${fmtUSD(v)}</span></td>`;
+    }).join('') + '</tr>';
+  });
+  html += '</tbody>';
+  document.getElementById('sens-table').innerHTML = html;
+}
+
+function bindDCFListeners(c){
+  ['in-fcf0','in-g1','in-gt','in-wacc','in-shares'].forEach(id=>{
+    document.getElementById(id).addEventListener('input', ()=>updateDCF(c));
+  });
+}
+
+/* ======================================================================
+   9. SCORECARD
+   ====================================================================== */
+function renderScorecard(c){
+  const grid = document.getElementById('score-grid');
+  grid.innerHTML = c.scorecard.map((s,i)=>`
+    <div class="score-card">
+      <h4>${s.category}</h4>
+      <div class="score-dots">${[1,2,3,4,5].map(n=>`<div class="dot ${n<=s.score?'filled':''}"></div>`).join('')}</div>
+      <div class="weight-input">Weight <input type="number" min="0" max="100" value="${s.weight}" data-idx="${i}" class="weight-field"> %</div>
+      <p>${s.rationale}</p>
+    </div>`).join('');
+
+  grid.querySelectorAll('.weight-field').forEach(inp=>{
+    inp.addEventListener('input', ()=>{
+      const idx = parseInt(inp.dataset.idx);
+      c.scorecard[idx].weight = parseFloat(inp.value) || 0;
+      computeOverallScore(c);
+    });
+  });
+  computeOverallScore(c);
+}
+
+function computeOverallScore(c){
+  const totalWeight = c.scorecard.reduce((s,x)=>s+x.weight,0) || 1;
+  const weighted = c.scorecard.reduce((s,x)=> s + (x.score * x.weight), 0) / totalWeight;
+  document.getElementById('ob-score').textContent = weighted.toFixed(1) + ' / 5';
+  let band, note;
+  if (weighted >= 4.5){ band='High quality, attractively priced'; }
+  else if (weighted >= 3.5){ band='High quality, fully (or richly) valued'; }
+  else if (weighted >= 2.5){ band='Mixed signals — worth digging deeper'; }
+  else if (weighted >= 1.5){ band='Weak fundamentals on this checklist'; }
+  else { band='Multiple red flags'; }
+  document.getElementById('ob-band').textContent = band;
+  document.getElementById('ob-note').textContent = 'Weighted average of the five category scores (weights total ' + totalWeight.toFixed(0) + '%). This is a structured way to organize your own judgment — not a buy/sell signal.';
+}
+
+/* ======================================================================
+   10. SORTABLE TABLE HEADERS (generic)
+   ====================================================================== */
+function makeSortable(tableId){
+  const table = document.getElementById(tableId);
+  table.addEventListener('click', e=>{
+    const th = e.target.closest('th');
+    if (!th) return;
+    const idx = Array.from(th.parentNode.children).indexOf(th);
+    const tbody = table.querySelector('tbody');
+    const rows = Array.from(tbody.querySelectorAll('tr')).filter(r=>!r.classList.contains('group-row'));
+    const dir = th.dataset.dir === 'asc' ? 'desc' : 'asc';
+    th.dataset.dir = dir;
+    rows.sort((a,b)=>{
+      const av = parseFloat(a.children[idx].textContent.replace(/[^0-9.-]/g,'')) || 0;
+      const bv = parseFloat(b.children[idx].textContent.replace(/[^0-9.-]/g,'')) || 0;
+      return dir==='asc' ? av-bv : bv-av;
+    });
+    rows.forEach(r=>tbody.appendChild(r));
+  });
+}
+
+/* ======================================================================
+   11. MAIN RENDER
+   ====================================================================== */
+function render(){
+  const c = COMPANIES[currentTicker];
+  renderHeader(c);
+  renderKPIs(c);
+  renderIncomeChart(c);
+  renderMarginsChart(c);
+  renderCashflowChart(c);
+  renderLeverageChart(c);
+  renderRatioTable(c);
+  renderPeers(c);
+  renderDCF(c);
+  bindDCFListeners(c);
+  renderScorecard(c);
+}
+
+initSelector();
+render();
+makeSortable('ratio-table');
+makeSortable('peer-table');
+populateScreenerFilter();
+renderScreenerTable();
+bindScreenerControls();
+makeSortable('screener-table');
+</script>
+</body>
+</html>
